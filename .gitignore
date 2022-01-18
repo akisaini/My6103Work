@@ -1,3 +1,7 @@
+
+#Ignoring the LICENSE file in the directory. 
+LICENSE
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
