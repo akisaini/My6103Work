@@ -48,8 +48,8 @@ def perms(val):
         for i in range(0, len(val)): #length = 3
             p1 = val[i] #first element
             p2 = val[:i]+val[i+1:] #all ele till but not including the first ele + all ele after the first ele.
-            lst.append(p1+p2)
-            for j in perms(p2)
+            for j in perms(p2):
+                lst.append(p1+j)
         
         return lst        
         
@@ -63,7 +63,24 @@ perms('abc')
 # Write a python program to print all the different arrangements of the
 # letters A, B, C and D. Each string printed is a permutation of ABCD.
 # ----------------------------------------------------------------
-
+def perms(val):
+    if len(val) == 0: #no value given, return empty list
+        return []
+    elif len(val) == 1: #value given is a single letter 
+        return [val]
+    # else 2 or more letters are given as input
+    else:
+        lst = []
+        
+        for i in range(0, len(val)): #length = 3
+            p1 = val[i] #first element
+            p2 = val[:i]+val[i+1:] #all ele till but not including the first ele + all ele after the first ele.
+            for j in perms(p2):
+                lst.append(p1+j)
+        
+        return lst        
+        
+perms('abcd')  
 
 
 
@@ -79,10 +96,15 @@ perms('abc')
 #   *******
 #  *********
 # ----------------------------------------------------------------
-
-
-
-
+def chrtree():
+    level = int(input('Enter the height of the tree!'))
+    star = 1
+    
+    for i in range(level):
+        print(" " * (level-i) + '*' * star )
+        star+=2
+        
+        
 
 #%%
 # =================================================================
