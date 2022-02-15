@@ -226,5 +226,3 @@ print(len(persons))
 #   # __init__ is also called constructor in other propgramming langs
 #   # it also set the attributes in here 
 #   def __init__(self) :
-
-  
