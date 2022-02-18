@@ -2,7 +2,7 @@
 #%%
 # ######  QUESTION 1   First, review Looping    ##########
 # Write python codes to print out the four academic years for a typical undergrad will spend here at GW. 
-# Starts with Sept 2021, ending with May 2025 (ntotal of 45 months), with printout like this:
+# Starts with Sept 2021, ending with May 2025 (total of 45 months), with printout like this:
 # Sept 2021
 # Oct 2021
 # Nov 2021
@@ -20,12 +20,11 @@
 
 
 monthofyear = ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec')
-#for j in range(1,6):
+year = ['1', '2', '3', '4', '5', '6']
 for i in range(1,45):
-    pt = (i-5)%12
-    print(f'{monthofyear[pt]} 202')
-#    if monthofyear[0] :
-#      ++j
+    print(f'{monthofyear[(i-5)%12]} 202{year[0]}')
+    if monthofyear == 'Jan' :
+      del year[0]   
  # elif "":
  #   print(f'{monthofyear[pt]} 202{year[1]}')
  # elif "" :
@@ -121,35 +120,36 @@ val = 'C'
 def to_gradepoint(val):
   
   if val=='A+':
-    print(4.0)
+    return (4.0)
   elif val=='A':
-    print(3.9)
+    return (3.9)
   elif val=='A-':
-    print(3.7)
+    return (3.7)
   elif val=='B+':
-    print(3.3)
+    return (3.3)
   elif val=='B':
-    print(3.0)
+    return (3.0)
   elif val=='B-':
-    print(2.7)
+    return (2.7)
   elif val=='C+':
-    print(2.3)
+    return (2.3)
   elif val=='C':
-    print(2.0)
+    return (2.0)
   elif val=='C-':
-    print(1.7)
+    return (1.7)
   elif val=='D+':
-    print(1.3)
+    return (1.3)
   elif val=='D':
-    print(1.0)
+    return (1.0)
   elif val=='D-':
-    print(0.7)  
+    return (0.7)  
   else:
-    print(0.0)   
+    return (0.0)   
   
 
 # Try:
 print(to_gradepoint(val))
+
 
 '''
 # What is the input (function argument) data type for find_grade? - String type
@@ -170,13 +170,15 @@ def to_gradepoint_credit(course):
   # eventually, if you need to print out the value to 2 decimal, you can 
   # try something like this for floating point values %f
   # print(" %.2f " % grade_point_credit)
+  
+  grade_point_credit = course["credits"] * (to_gradepoint(course["grade"]))
   return grade_point_credit
 
 # Try:
 print(" %.2f " % to_gradepoint_credit(course) )
 
-# What is the input (function argument) data type for to_gradepoint_credit? 
-# What is the output (function return) data type for to_gradepoint_credit(course) ?
+''' What is the input (function argument) data type for to_gradepoint_credit? -Dictionary type
+ What is the output (function return) data type for to_gradepoint_credit(course) ? - float type'''
 
 
 #%%
@@ -195,17 +197,28 @@ courses = [
 
 def find_gpa(courses):
   # write an appropriate and helpful docstring
-  ntotal_grade_point_credit =0 # initialize 
-  ntotal_credits =0 # initialize
-  # ??????    fill in your codes here
-  # gpa = ?????
+  total_grade_point_credit =0 # initialize 
+  total_credits =0 # initialize
+  credit_lt = []
   
-
+  for i in range(len(courses)):
+    credit_lt.append(courses[i]["credits"])
+  for element in credit_lt:
+    total_credits += element # Adding the total credits from within the list
+ 
+  lt = []
+  for i in range(len(courses)):
+    lt.append(to_gradepoint_credit(courses[i]))
+  for element in lt:
+    total_grade_point_credit += element
+   
+  final_gpa = (total_grade_point_credit / total_credits)   
+  return final_gpa
 # Try:
-print(" %.2f " % find_gpa(courses) )
+print(" %.2f " % find_gpa(courses))
 
-# What is the input (function argument) data type for find_gpa? 
-# What is the output (function return) data type for find_gpa(courses) ?
+''' What is the input (function argument) data type for find_gpa? - List type
+ What is the output (function return) data type for find_gpa(courses) ? - float type '''
 
 
 #%%
@@ -222,14 +235,14 @@ def printCourseRecord(course):
   # 2018 spring - DATS 6101 : Intro to DS (3 credits) B-  Grade point credits: 8.10 
   key = list(course.keys())
   val = list(course.values())
-  print(f'{val[3]} {val[2]} - {val[1]} : {val[0]} ({val[5]} {key[5]}) {val[4]} Grade point credits: 8.10')
+  print(f'{val[3]} {val[2]} - {val[1]} : {val[0]} ({val[5]} {key[5]}) {val[4]} Grade point credits: {" %.2f " % to_gradepoint_credit(course)}')
   return None# or return None
   
 # Try:
 printCourseRecord(course)
 
-# What is the input (function argument) data type for printCourseRecord? - Dictionary type
-# What is the output (function return) data type for printCourseRecord(course) ? - String type 
+''' What is the input (function argument) data type for printCourseRecord? - Dictionary type
+ What is the output (function return) data type for printCourseRecord(course) ? - String type '''
 
 
 #%%
@@ -241,13 +254,18 @@ printCourseRecord(course)
 # Cumulative GPA: ?????
  
 def printTranscript(courses):
-  # write an appropriate and helpful docstring
+  '''
+  for every course in the course dictionary, run it along the printCourseRecord function  - returning individual records. For the gpa calculation, pass the courses dictionary to the find_gpa function. 
+  '''
   for course in courses:
-    # print out each record as before
+    printCourseRecord(course)
+  print('\n''\n') #new line, new line
+  print(f'Cumulative GPA: {"%.2f " % find_gpa(courses)}')
+  
   
   # after the completion of the loop, print out a new line with the gpa info
   
-  return # or return None
+  return None
 
 # Try to run, see if it works as expected to produce the desired result
 # courses is already definted in Q4
@@ -262,8 +280,8 @@ printTranscript(courses)
 # 2021 fall - DATS 6101 : Capstone (3 credits) A- Grade point credits: 11.10
 # Cumulative GPA: 3.37
 
-# What is the input (function argument) data type for printTranscript?  - List
-# What is the output (function return) data type for printTranscript(courses) ?
+''' What is the input (function argument) data type for printTranscript?  - List type
+ What is the output (function return) data type for printTranscript(courses) ? - String type'''
 
 
 

@@ -71,12 +71,13 @@ list1+list1b
 # 
 # Question: how do you get the row of [31,32,33,34] in list1?
 # 
-#
+# 
 # 
 #%%
 # Question: How to you get the column of 12, 22, 32 ???
-# 
-#
+# a = (list1[0][1])
+# b = list1[1][1]
+# c = list1[2][1]
 #%%
 [ row[1] for row in list1 ]
 
@@ -97,14 +98,19 @@ list2 = [ [11,12,13], [21,22,23], [31,32,33], [41,42,43] ] # two dimensional lis
 
 # How do you access the different parts of these two lists?
 
+
 #%%
 # How do you create a higher-dimensional list (say 2x3x4)?
-# 
+# list3try = [
 # list3D = [ [ [111,112,113], [121,122,123], [131,132,133], [141,142,143] ] 
 # , [ [211,212,213], [221,222,223], [231,232,233], [241,242,243] ] ] 
 
 list3D = [ [ [ 111, 112, 113, 114 ], [ 121, 122, 123, 124 ], [131, 132, 133, 134] ] , 
            [ [ 211, 212, 213, 214 ], [ 221, 222, 223, 224 ], [231, 232, 233, 234] ] ]
+
+
+
+
 
 #%%
 # Now try numpy
@@ -195,7 +201,7 @@ print("nparray1.strides =", nparray1.strides)  # each value is int64, hence 8-by
 # if we redo 
 nparray1 = np.array(list1, dtype= np.int32)
 print("nparray1 = \n", nparray1)
-print("type(nparray1) =", type(nparray1))
+print("type(nparray1) =", type(nparray1)) 
 print("nparray1.dtype =", nparray1.dtype)  # int32
 print("nparray1.shape =", nparray1.shape)
 print("nparray1.strides =", nparray1.strides)  # now each value is int32, 4-byte, with four columns, it takes 4x4 = 16 bytes to next row. 
