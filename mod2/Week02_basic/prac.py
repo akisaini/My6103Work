@@ -30,3 +30,10 @@ def convgrade():
     return final
 
 #%%
+import numpy as np
+
+
+
+
+
+#%%
