@@ -38,7 +38,7 @@ print("nparray2b:",nparray2b)
 # and describe what you find.
 '''
 #value equality and id test:
-nparray2 is a copy of list2 by reference. nparray2b is i,j mutated.  
+nparray2 is a copy of list2 by reference (view). nparray2b is i,j mutated.  
 '''
 nparray2 is nparray2b # False. nparray2 and nparray2b essentially point to two separate memory objects. They are logically equal but their memory id points to two separate objects. 
 
@@ -101,17 +101,20 @@ idlabels
 nparray2c = nparray2.view() #shallow copy
 # now change nparray2c 1,1 position to 0. Check nparray2 and nparray2c again. 
 
-nparray2c[1,1] = 0
+nparray2c[1][1] = 0
 print(nparray2)
 print(nparray2c)
 # Print out the two arrays now. Is that what you expect?
-# Yes. changes on shallow copy relect on original copy as well. 
+''' Yes. changes on shallow copy relect on original copy as well. '''
 # Also use the "==" operator and "is" operator to test the 2 arrays.
-nparray2c is nparray2   ------------shouldnt this be TRUE?
+nparray2c is nparray2   
+print(id(nparray2c))
+print(id(nparray2))
+'''False, as showllow copy has a different memory than the original copy.'''
 
 nparray2c == nparray2    
-# write your codes here
-#
+'''True, as the logical values of both the arrays are the same. '''
+
 
 #%%
 # ######  Part 1e      Part 1e      Part 1e   ##########
@@ -284,8 +287,9 @@ print(nparray5)
 # write your codes here
 #
 nparray6a = nparray3D[nparray3D%3==0]
+#flatlist
 print(nparray6a)
-print(nparray6a.shape) #flatlist
+print(nparray6a.shape) 
 #%%
 # 6.8) Instead of getting a flat array structure, can you try to perform the filtering 
 # in 6.7, but resulting in a numpy array the same shape as nparray3D? Say if a number 
