@@ -32,8 +32,60 @@ def convgrade():
 #%%
 import numpy as np
 
+'''
+vstack,
+hstack
+indices
+'''
+#      *
+#     ***
+#    *****
+#   *******
+#  *********
+
+def startree(val):
+    initstar = 1
+    #val = 3
+    for i in range(val):
+        print(" "*val +"*"*initstar )
+        initstar +=2        
+        val -= 1
+
+startree(5)
+
+#%%
+
+#python pr to print prime numbers upto a specified value. For eg: 
+#if given 9, Print the first 9 prime numbers. 
 
 
+def primenum(val):
+    for i in range(2, val):
+        for j in range(2,i+1):
+            if i%j==0:
+               continue
+        print(i)
 
+primenum(10)
+#%%
+
+#1,1,2,3,5,8,13,21......
+
+def fib(val):
+    if val == 0:
+        return 1
+    elif val == 1:
+        return 1
+    elif val == 2:
+        return 2
+    else:
+        #fib(n) = fib(n-1)+ fib(n-2)
+        return fib(val-1)+fib(val-2)  
+
+def printseries(val):    
+    for i in range(val):
+        print(fib(i))
+            
+printseries(20) 
 
 #%%
