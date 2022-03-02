@@ -33,8 +33,6 @@ def convgrade():
 import numpy as np
 
 '''
-vstack,
-hstack
 indices
 '''
 #      *

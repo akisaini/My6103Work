@@ -77,7 +77,7 @@ hourofdayleft = 8   # Keep a running total of hours left after taken a course. S
 
 
 for i in range(1,31):
-    print(f'Mar{marchdate}({dayofweektuple[(i-2)%7]}:{title[i]}:{time[i]}hours')
+    print(f'Mar{marchdate}({dayofweektuple[(i%7)]}:{title[i]}:{time[i]}hours')
     
 
 #%%

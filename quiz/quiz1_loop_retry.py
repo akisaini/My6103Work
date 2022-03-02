@@ -7,6 +7,7 @@ print(f"Length: {len(q1.courselist)}")
 courses = q1.courselist 
 print(courses[0])
 
+
 #%%[markdown]
 # Do not import any other libraries to perform this task.
 # 
@@ -45,39 +46,83 @@ print(courses[0])
 # 
 
 # %%
-dayofweektuple = ('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
-marchdate = 1     # March dates from 1, 2, ... , 31, increment by 1 after each filled day
-hourofdayleft = 8   # Keep a running total of hours left after taken a course. Starting with 8 hours on the first day
-# loop through the list of courses and print.
-
-
-# %%
-title = []
-for course in courses:
-    for key, val in course.items():
-        #print("{} : {}".format(key, val))
-        if key=="title":
-            title.append(val)        
-    print(title)
-
-time = []
-for course in courses:
-    for key, val in course.items():
-        #print("{} : {}".format(key, val))
-        if key=="time":
-            time.append(val)        
-    print(time)
+#%%
+# Step 1
+# loop through the list of courses and their hours, and print (like below).
+# 
+# Supervised Learning with scikit-learn : 4.0 hour
+# Python Data Science Toolbox (Part 1) : 3.0 hour
+# Introduction to Python : 4.0 hour
+# Intermediate Python : 4.0 hour
+# Introduction to Data Science in Python : 4.0 hour
+# Data Manipulation with pandas : 4.0 hour
+# Python Data Science Toolbox (Part 2) : 4.0 hour
+# Joining Data with pandas : 4.0 hour
+# ...
+# 
 
 #%%
+# Step 2
+# Try to put in the date in March (variable marchdate) on the printout as well.
+# If the date value is not what is expected, try using the debugger to inspect the different values at different steps.
+# You will need to keep a running total of how many hours left for each day before increment of the marchdate value. 
+# The running total is being tracked using hourofdayleft variable. 
+# Try to produce printout like this:
+#
+# Mar 1 : Supervised Learning with scikit-learn : 4.0 hour
+# Mar 1 : Python Data Science Toolbox (Part 1) : 3.0 hour
+# Mar 1 : Introduction to Python : 4.0 hour
+# Mar 2 : Intermediate Python : 4.0 hour
+# Mar 2 : Introduction to Data Science in Python : 4.0 hour
+# Mar 3 : Data Manipulation with pandas : 4.0 hour
+# Mar 3 : Python Data Science Toolbox (Part 2) : 4.0 hour
+# Mar 4 : Joining Data with pandas : 4.0 hour
+# Mar 4 : Introduction to Data Visualization with Matplotlib : 4.0 hour
+# ...
+marchdate = 1     # March dates from 1, 2, ... , 31, increment by 1 after each filled day
+hourofdayleft = 8   # Keep a running total of hours left after taken a course. Starting with 8 hours on the first day
 
+
+#%%
+# Step 3
+# Try to put in the final piece of info to the print line. 
+#
 dayofweektuple = ('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
 marchdate = 1     # March dates from 1, 2, ... , 31, increment by 1 after each filled day
 hourofdayleft = 8   # Keep a running total of hours left after taken a course. Starting with 8 hours on the first day
-# loop through the list of courses and print.
 
+#%%
+#step1
+title = []
+for course in courses:
+    for key,value in course.items():
+        if key == "title":
+            title.append(value)
+time = []
+for course in courses:
+    for key,value in course.items():
+        if key == "time":
+            time.append(value)
 
-for i in range(1,31):
-    print(f'Mar{marchdate}({dayofweektuple[(i-2)%7]}:{title[i]}:{time[i]}hours')
-    
+lt1= []
+for i in range(0,98):
+    lt1.append(f'{title[i]} : {time[i]} hour')
+print(lt1)
+# %%
+#step2
+# Mar 1 : Supervised Learning with scikit-learn : 4.0 hour
+# Mar 1 : Python Data Science Toolbox (Part 1) : 3.0 hour
+# Mar 1 : Introduction to Python : 4.0 hour
+# Mar 2 : Intermediate Python : 4.0 hour
+for i in range(0,98):
+    if hourofdayleft > time[i]:
+        print(f'Mar {marchdate}')
+        hourofdayleft = hourofdayleft - time[i]        
+    elif hourofdayleft < 0:
+        marchdate += 1 
+        hourofdayleft = 8
+    else: 
+        marchdate += 1 
+        hourofdayleft = 8
 
 #%%
