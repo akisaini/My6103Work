@@ -4,8 +4,8 @@
 #%% [markdown]
 #
 # # HW OOP
-# ## By: xxx
-# ### Date: xxxxxxx
+# ## By: Akshat Saini
+# ### Date: 3/7/2022
 #
 
 
@@ -19,7 +19,7 @@
 # Let us try to use OOP to manage something useful.
 # 
 # This first part of the exercise, we will use just basic python and OOP to 
-# create a Stock class, to keep track of different stocks in a portfolio. 
+# create a Stock class, to keep track of different stocks in ]'a portfolio. 
 # Let's say, Apple. (NO numpy nor pandas here in this Part I.)
 # 
 # I pulled data from https://old.nasdaq.com/symbol/aapl/historical (5 years, 
@@ -78,6 +78,7 @@
 # directory to where you need. like:
 # filepath = "/Users/edwinlo/GDrive_GWU/github_elo/GWU_classes_p/DATS_6103_DataMining/Assignment/AAPL_daily.csv"
 import os
+os.chdir('c:\\Users\\saini\\Documents\\GWU\\6103-DM\\Github Repository\\My6103Work\\Assignments\\HW_OOP')
 appl_date = []
 appl_price_eod = []
 filepath = os.path.join( os.getcwd(), "AAPL_daily.csv")
@@ -119,14 +120,21 @@ class Stock:
     self.firstdate = firstdate
     self.lastdate = lastdate
     # below can be started with empty lists, then read in data file and calculate the rest
+    
     self.price_eod = [] # record the end-of-day prices of the stock in a list. The 0-th position is the latest end-of-day price
-    self.volumes = [] # a list recording the daily trading volumn
+    
+    self.volumes = [] # a list recording the daily trading volumn <<<<<<<----- what does this mean? 
+    
     self.dates = [] # starts from the latest/newest date, 
+    
+    
     self.delta1 = [] # daily change values, today's close price minus the previous close price. Example eod[0] - eod[1], eod[1] - eod[2], 
+      
     self.delta2 = [] # daily change values, the previous close minus today's close, example eod[0] - eod[1], eod[1] - eod[2]
     # change of the daily change values (second derivative, acceleration), 
     # given by, for the first entry, (delta1[0] - delta[1]), 
     # or if we want to, equals to (eod[0]-eod[1]) - (eod[1]-eod[2]) = eod[0] - 2*eod[1] + eod[2]
+      
     self.import_history(init_filepath)
     self.compute_delta1_list() # Calculate the daily change values from stock price itself.
     self.compute_delta2_list() # Calculate the daily values of whether the increase or decrease of the stock price is accelerating. A.k.a. the second derivative.
@@ -143,8 +151,12 @@ class Stock:
         # Fill in the codes here to put the right info in the lists self.dates, self.price_eod, self.volumes  
         # Should be similar to the codes in Step 0 above. 
         #  ######  END QUESTION 1 ######  END QUESTION 1 ######  END QUESTION 1 ######  END QUESTION 1 ######  
+        tmp = aline.split(',')
+        self.price_eod.append(float(tmp[1]))
 
-
+        self.dates.append(tmp[0].strip())
+        
+        
     # fh.close() # close the file handle when done if it was not inside the "with" clause
     # print('fh closed:',fh.closed) # will print out confirmation  fh closed: True
     return self
@@ -183,8 +195,14 @@ class Stock:
     # Essentially the same as compute_delta1_list, just on a different list 
     # Again you might want to print out the first few values of the delta2 list to inspect
     #  ######  END QUESTION 2 ######  END QUESTION 2 ######  END QUESTION 2 ######  END QUESTION 2 ######  
-
+    
+    del_shift1 = self.delta1.copy() ### <---- what about using a view() ? 
+    del_shift1.pop(0) 
+    self.delta2 = list(map(lambda x,y: x-y, self.delta1, del_shift1))
+    print(self.name.upper(),": The latest 5 daily changes in delta2: ")
+    for i in range(0,5): print(self.delta2[i]) # checking the first five values
     return self
+
   
   def insert_newday(self, newdate, newprice, newvolume):
     """
@@ -224,9 +242,14 @@ class Stock:
     """
     calculate the percentage change in the last n days, returning a percentage between 0 and 100, or sometimes higher.
       """
+    
     #  ######   QUESTION 4    ######   QUESTION 4    ######   QUESTION 4    ######   QUESTION 4    ######  
-    change = 'What should it be?' # calculate the change of price between newest price and n days ago
-    percent = 'What should it be?' # calculate the percent change (using the price n days ago as the base)
+      # calculate the change of price between newest price and n days ago
+    price_copy = self.price_eod.copy() 
+    change = price_copy[0] - price_copy[n] # checking the first n values
+  
+      # calculate the percent change (using the price n days ago as the base)
+    percent = float((change/price_copy[n])*100)
     print(f"{self.symbol} : Percent change in {n} days is {percent.__round__(2)}%")
     #  ######  END QUESTION 4 ######  END QUESTION 4 ######  END QUESTION 4 ######  END QUESTION 4 ######  
 
@@ -241,17 +264,19 @@ import os
 # filepath = dirpath+'/AAPL_daily.csv' # lastdate is 9/12/19, firstdate is 9/12/14, 
 # using os.path.join will take care of difference between 
 # mac/pc/platform issues how folder paths are used, backslash/forward-slash/etc
-filepath = os.path.join( os.getcwd(), 'AAPL_daily.csv')
+dirpath = os.getcwd()
+filepath = os.path.join( os.getcwd(), dirpath+'\\AAPL_daily.csv')
 # or just this should work
 # filepath = 'AAPL_daily.csv'
 aapl = Stock('AAPL','Apple Inc','9/12/14','9/12/19',filepath) # aapl is instantiated!
 
+
 #%%
 # Great! Now we can get the competitors easily
-filepath = 'MSFT_daily.csv'
+filepath = dirpath+'\\MSFT_daily.csv'
 msft = Stock('MSFT','Microsoft Inc','9/12/14','9/12/19',filepath)
 
-filepath = 'GOOG_daily.csv'
+filepath = dirpath+'\\GOOG_daily.csv'
 goog = Stock('GOOG','Alphabet Inc','9/12/14','9/12/19',filepath)
 
 
@@ -267,7 +292,19 @@ goog = Stock('GOOG','Alphabet Inc','9/12/14','9/12/19',filepath)
 # Which one perform best in each of the periods above?? 
 # 
 #  ######  END QUESTION 6 ######  END QUESTION 6 ######  END QUESTION 6 ######  END QUESTION 6 ######  
+googvals = goog.nday_change_percent(50)
+msftvals = msft.nday_change_percent(50)
+aaplvals = aapl.nday_change_percent(50)
 
+googvals1 = goog.nday_change_percent(200)
+msftvals1 = msft.nday_change_percent(200)
+aaplvals1 = aapl.nday_change_percent(200)
+
+googvals2 = goog.nday_change_percent(600)
+msftvals2 = msft.nday_change_percent(600)
+aaplvals2 = aapl.nday_change_percent(600)
+
+#From the data GOOG performed best in first period, MSFT in the second, and MSFT again the third.
 
 #%%
 # 
