@@ -5,8 +5,6 @@ import pandas as pd
 import requests
 import numpy as np
 import matplotlib.pyplot as plt
-#%%
-tmp = dm.api_dsLand('AStudentRecord')
 
 #%%
 def dbCon_dsLand(tbname, ind_col_name = ""):
