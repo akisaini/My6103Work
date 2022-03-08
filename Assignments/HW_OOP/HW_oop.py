@@ -156,6 +156,9 @@ class Stock:
 
         self.dates.append(tmp[0].strip())
         
+        self.volumes.append(tmp[2].strip())
+        
+        
         
     # fh.close() # close the file handle when done if it was not inside the "with" clause
     # print('fh closed:',fh.closed) # will print out confirmation  fh closed: True
@@ -224,15 +227,15 @@ class Stock:
     # Fill in the codes here 
     #
     # insert newdate to dates[]
-    self.dates.insert('Something Here')
+    self.dates.insert(0, newdate)
     # insert newvolume to volumes[]
-    self.volumes.insert('Something Here')
+    self.volumes.insert(2, newvolume)
     # insert new eod data value to price_eod
-    self.price_eod.insert('Something Here')
+    self.price_eod.insert(1, newprice)
     # calculate and insert new data to delta1
-    self.delta1.insert('Something Here')
+    self.delta1.insert(0, self.compute_delta1_list())
     # calculate and insert new data to delta2
-    self.delta2.insert('Something Here')
+    self.delta2.insert(0, self.compute_delta2_list())
     #
     #  ######  END QUESTION 3 ######  END QUESTION 3 ######  END QUESTION 3 ######  END QUESTION 3 ######  
 
@@ -305,6 +308,16 @@ msftvals2 = msft.nday_change_percent(600)
 aaplvals2 = aapl.nday_change_percent(600)
 
 #From the data GOOG performed best in first period, MSFT in the second, and MSFT again the third.
+
+# GOOG : Percent change in 50 days is 11.07%
+# MSFT : Percent change in 50 days is 0.69%
+# AAPL : Percent change in 50 days is 10.04%
+# GOOG : Percent change in 200 days is 20.55%
+# MSFT : Percent change in 200 days is 33.42%
+# AAPL : Percent change in 200 days is 29.48%
+# GOOG : Percent change in 600 days is 41.49%
+# MSFT : Percent change in 600 days is 102.47%
+# AAPL : Percent change in 600 days is 54.35%
 
 #%%
 # 

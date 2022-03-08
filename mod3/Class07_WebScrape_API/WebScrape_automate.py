@@ -15,8 +15,8 @@
  
 #%%[markdown] 
 # First, install selenium
-# %pip install selenium
-# %pip3 install selenium
+#%pip install selenium
+#%pip3 install selenium
 #  
 # follow the url from the messages when you install selenium,  
 #  
@@ -68,7 +68,10 @@ from bs4 import BeautifulSoup
 
 #%%
 # Basic setup, test chrome launch
-driver = webdriver.Chrome(r'/Users/elo/Downloads/dev/chromedriver/chromedriver')
+brave_path = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
+option = webdriver.ChromeOptions()
+option.binary_location = brave_path
+driver = webdriver.Chrome(r'\Users\saini\Projects\chromedriver.exe', chrome_options=option)
 # also need to install and locate the webdriver.Chrome location
 # for my install, I need to set 
 # driver = webdriver.Chrome(r'/Users/elo/Downloads/dev/chromedriver')  # mac OS

@@ -67,8 +67,8 @@ print("\nReady to continue.")
 # We will use the library beautifulSoup with the default parser lxml. 
 # Another common alternative to beautifulSoup is the scrapy library.
 # Need to install for the first time:
-# %pip install bs4
-# %pip3 install bs4
+#%pip install bs4
+#%pip3 install bs4
 # One of the parser is lxml. We will use 'html5lib' mainly here. They are very similar and 
 # you can't tell the difference most of the time. 
 # If you need lxml, and your system does not have it, do: 
