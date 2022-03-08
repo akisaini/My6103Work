@@ -1,5 +1,5 @@
 #%%
-# %pip3 install mysql-connector-python
+#%pip3 install mysql-connector-python
 # If the above line does not work, try the version below
 # %pip install mysql-connector-python==8.0.28
 # Also see https://dev.mysql.com/downloads/connector/python/ for more info and other option
