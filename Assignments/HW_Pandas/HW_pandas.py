@@ -4,8 +4,8 @@
 #%% [markdown]
 #
 # # HW Pandas
-# ## By: xxx
-# ### Date: xxxxxxx
+# ## By: Akshat Saini 
+# ### Date: 3/16/2022
 #
 
 #%% [markdown]
@@ -29,6 +29,11 @@ print("\nReady to continue.")
 
 # What are the variables in the df? 
 # What are the data types for these variables?
+#%%
+dfaapl.info()
+# The dataframe dfaapl has two variables/columns - 'Price' and 'Volume'. 
+# Price is of type float. Volume is of type int. 
+#%%
 
 # ######  END of QUESTION 1    ###   END of QUESTION 1   ##########
 
@@ -98,14 +103,14 @@ class Stock:
     # essentially the same function as init_delta1.
 
     # ######  QUESTION 2      QUESTION 2      QUESTION 2   ##########
-
-    # write your codes here
+    self.data['delta2'] = 0
+    self.data['delta2'] = self.data['delta1'][0:-1] - self.data.delta1.values[1:]
     
     # ######  END of QUESTION 2    ###   END of QUESTION 2   ##########
 
     return # you can choose to return self
 
-
+#%%
   def add_newday(self, newdate, newprice, newvolume):
     """
     add a new data point at the beginning of data df
@@ -132,7 +137,7 @@ class Stock:
 
     return self
 
-  
+#%%
   def setNewRow(self, newdate, newprice, newvolume):
     # first create a copy of the dataframe with a dummy first row
     # the correct newdate is set as the index value for this 1-row dataframe
@@ -144,12 +149,15 @@ class Stock:
 
     # write your codes here
     # set volume value
+    df.volume[0] = newvolume
     # set delta1 value
+    self.data.init_delta1()
     # set delta2 value
+    self.data.init_delta2()
     
     # ######  END of QUESTION 3    ###   END of QUESTION 3   ##########
     return df  # return the dataframe with one one row of data
-  
+#%%
   def nday_change_percent(self,n):
     """
     calculate the percentage change in the last n days, returning a percentage between 0 and 100
@@ -158,12 +166,17 @@ class Stock:
 
     # change = ??
     # percent = ??
+    price_copy = self.data.price.copy() 
+    change = price_copy[0] - price_copy[n] # checking the first n values
+  
+      # calculate the percent change (using the price n days ago as the base)
+    percent = float((change/price_copy[n])*100)
     
     # ######  END of QUESTION 4    ###   END of QUESTION 4   ##########
     print(self.symbol,": Percent change in",n,"days is {0:.2f}".format(percent))
-    return # percent ??
+    return percent
   
-
+#%%
   def nday_max_price(self,n):
     """
     find the highest price within the last n days 
@@ -172,8 +185,15 @@ class Stock:
 
     # return ??  # you can try to use the .max() function of a pandas dataframe
     
+    lt = []
+    for i in range(0,n):
+      lt.append(self.data.price[i])
+      
+    lt_df = pd.DataFrame(lt, columns = ['Number'])
+    
+    return lt_df.max()
     # ######  END of QUESTION 5    ###   END of QUESTION 5   ##########
-
+#%%
   def nday_min_price(self,n):
     """
     find the lowest price within the last n days 
@@ -183,6 +203,14 @@ class Stock:
     # return ?? 
     
     # ######  END of QUESTION 6    ###   END of QUESTION 6   ##########
+    
+    lt = []
+    for i in range(0,n):
+      lt.append(self.data.price[i])
+      
+    lt_df = pd.DataFrame(lt, columns = ['Number'])
+    
+    return lt_df.min()
 
 #%%
 # ######  QUESTION 7      QUESTION 7      QUESTION 7   ##########
