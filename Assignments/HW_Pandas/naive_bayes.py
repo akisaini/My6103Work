@@ -77,6 +77,6 @@ model.predict(email_test)
 # %%
 X_test_count  = cv.transform(X_test)
 # %%
-model.score(X_test_count, y_test)
+model.score(X_test_count.values, y_test.values)
 
 # %%
