@@ -63,21 +63,27 @@ def getUrl(zipcode):
   url = 'https://www.wunderground.com/weather/us/'+zipcode # zipcode should be in the format:  stateAbbreviation/five-digit-zipcode like dc/20052
   return url 
 
-def getSoup(url,parser=''):
+def getSoup(url,parser='html5lib'):
   # ######  QUESTION 1      QUESTION 1      QUESTION 1   ##########
 
   # write your codes here
-
+  thepage = requests.get(url)
+  soup = BeautifulSoup(thepage.text, parser)
+  #ptitle = soup.find('title') generates tile
+  
   # ######  END of QUESTION 1    ###   END of QUESTION 1   ##########
-  return   # return some soup
+  return soup# return some soup
 
 def getTempHiLo(soup): # get the block of values of hi-lo temperature on this site
   # ######  QUESTION 2      QUESTION 2      QUESTION 2   ##########
 
   # write your codes here
+  lt = []
+  for c in soup.find_all('span',class_="wu-value wu-value-to"):
+    lt.append(c.text)
 
   # ######  END of QUESTION 2    ###   END of QUESTION 2   ##########
-  return # return the text for the hi-lo temperatures
+  return lt# return the text for the hi-lo temperatures
 
 def getDailyTemp(filename): 
   # the source file header has the list of zip codes I want to keep track. 
