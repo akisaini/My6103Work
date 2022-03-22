@@ -110,7 +110,7 @@ class Stock:
 
     return # you can choose to return self
 
-#%%
+
   def add_newday(self, newdate, newprice, newvolume):
     """
     add a new data point at the beginning of data df
@@ -137,7 +137,7 @@ class Stock:
 
     return self
 
-#%%
+
   def setNewRow(self, newdate, newprice, newvolume):
     # first create a copy of the dataframe with a dummy first row
     # the correct newdate is set as the index value for this 1-row dataframe
@@ -151,13 +151,13 @@ class Stock:
     # set volume value
     df.volume[0] = newvolume
     # set delta1 value
-    self.data.init_delta1()
+    self.init_delta1()
     # set delta2 value
-    self.data.init_delta2()
+    self.init_delta2()
     
     # ######  END of QUESTION 3    ###   END of QUESTION 3   ##########
     return df  # return the dataframe with one one row of data
-#%%
+  
   def nday_change_percent(self,n):
     """
     calculate the percentage change in the last n days, returning a percentage between 0 and 100
@@ -176,7 +176,6 @@ class Stock:
     print(self.symbol,": Percent change in",n,"days is {0:.2f}".format(percent))
     return percent
   
-#%%
   def nday_max_price(self,n):
     """
     find the highest price within the last n days 
@@ -193,7 +192,6 @@ class Stock:
     
     return lt_df.max()
     # ######  END of QUESTION 5    ###   END of QUESTION 5   ##########
-#%%
   def nday_min_price(self,n):
     """
     find the lowest price within the last n days 
@@ -242,14 +240,19 @@ dm.dfChk(dats)
 #%%
 # What are the variables in the df? 
 # What are the data types for these variables?
-#
 # The file has grades for a DATS class. Eight homeworks (out of 10 each), 2 quizzes (out of 100 each), and 2 projects (out of 100 each)
 # Find out the class average for each item (HW, quiz, project)
 # Hint, use .mean() function of pandas dataframe
 
+
 # ######  QUESTION 8      QUESTION 8      QUESTION 8   ##########
 
 # write your codes here
+variables = dats.columns
+dats.info()
+# All of the columns/variables are of type float. 
+dats.describe()
+# The describe function returns the min, max and mean values for all the HW's, quiz's and projects. 
 
 # ######  END of QUESTION 8    ###   END of QUESTION 8   ##########
 
@@ -261,11 +264,12 @@ dm.dfChk(dats)
 
 # ######  QUESTION 9      QUESTION 9      QUESTION 9   ##########
 
-# write your codes here
+rows_columns = dats.iloc[:,0:7].mean(axis = 1)
+rows_columns.head(30)
+dats.insert(8, 'HWavg', rows_columns)
+dats.head() # check result
 
 # ######  END of QUESTION 9    ###   END of QUESTION 9   ##########
-
-dats.head() # check result
 
 
 #%%
@@ -274,7 +278,15 @@ dats.head() # check result
 
 # ######  QUESTION 10      QUESTION 10      QUESTION 10   ##########
 
-# write your codes here
+hw_total = dats.iloc[:,0:7].sum(axis=1)*(.30)
+q1_total  = dats.iloc[:,9:10].sum(axis=1)*(.10)
+q2_total = dats.iloc[:,10:11].sum(axis=1)*(.15)
+p1_total = dats.iloc[:,11:12].sum(axis=1)*(.20)
+p2_total = dats.iloc[:,12:13].sum(axis=1)*(.25)
+
+total = hw_total + q1_total + q2_total + p1_total + p2_total
+
+dats['total'] = total
 
 # ######  END of QUESTION 10    ###   END of QUESTION 10   ##########
 
@@ -287,16 +299,19 @@ dats.head() # check result
 
 # write your codes here
 
+dats.describe()
+#For the 'HWavg' column, the mean value is 9.801 and for the 'total' column, the mean value for the class is 83.93, with the max value being 88.88
+
 # ######  END of QUESTION 11    ###   END of QUESTION 11   ##########
 
 #%%
 # Save out your dataframe as a csv file
-# import os
+import os
 
 # ######  QUESTION 12      QUESTION 12      QUESTION 12   ##########
 
 # write your codes here
-
+dats.to_csv('dats.csv')
 # ######  END of QUESTION 12    ###   END of QUESTION 12   ##########
 
 
@@ -314,9 +329,40 @@ def find_grade(total):
   # ######  QUESTION 13      QUESTION 13      QUESTION 13   ##########
 
   # copy your codes here, either from your Week03 hw, or the solution file
+  
+  ntotal = float(total)
+  
+  if ntotal > 96 and ntotal <= 100:
+    return('A+')
+  elif ntotal > 92 and ntotal <= 96:
+    return('A')
+  elif ntotal > 89 and ntotal <= 92:
+    return('A-')
+  elif ntotal > 86 and ntotal <= 89:
+    return('B+')
+  elif ntotal > 82 and ntotal <= 86:
+    return('B')
+  elif ntotal > 79 and ntotal <= 82:
+    return('B-')
+  elif ntotal > 76 and ntotal <= 79:
+    return('C+')
+  elif ntotal > 72 and ntotal <= 76:
+    return('C')
+  elif ntotal > 69 and ntotal <= 72:
+    return('C-')
+  elif ntotal > 66 and ntotal <= 69:
+    return('D+')
+  elif ntotal > 62 and ntotal <= 66:
+    return('D')
+  elif ntotal > 59 and ntotal <= 62:
+    return('D-')
+  else :
+    return('F') 
+
+# Try:
 
   # ######  END of QUESTION 13    ###   END of QUESTION 13   ##########
-  return # grade  
+  #return 
 
 #%%
 # Let us create one more column for the letter grade, just call it grade.
@@ -325,6 +371,9 @@ def find_grade(total):
 # ######  QUESTION 14      QUESTION 14      QUESTION 14   ##########
 
 # write your code using the .apply() function to obtaine a new column of letter grade (call that new column 'grade') from the total.
+
+dats['grade'] = dats['total'].apply(find_grade)
+dats.head()
 
 # ######  END of QUESTION 14    ###   END of QUESTION 14   ##########
 
@@ -338,9 +387,14 @@ def find_grade(total):
 
 # write your codes here
 
+count  = dats['grade'].value_counts()
+count.plot(kind = 'barh', color = 'black', legend = True, xlabel = 'Grade', title = 'Bar chart of total grade')
+
+
 # ######  END of QUESTION 15    ###   END of QUESTION 15   ##########
 
 
 
 #%%
+
 
