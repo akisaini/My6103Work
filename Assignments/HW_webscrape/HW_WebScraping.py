@@ -78,12 +78,17 @@ def getTempHiLo(soup): # get the block of values of hi-lo temperature on this si
   # ######  QUESTION 2      QUESTION 2      QUESTION 2   ##########
 
   # write your codes here
-  lt = []
-  for c in soup.find_all('span',class_="wu-value wu-value-to"):
-    lt.append(c.text)
-
+  
+ hi = soup.select('div > div.hi-lo > span.hi')[0].text
+ lo = soup.select('div > div.hi-lo > span.lo')[0].text
+      
   # ######  END of QUESTION 2    ###   END of QUESTION 2   ##########
-  return lt# return the text for the hi-lo temperatures
+ return (hi+'F'+', '+lo+'F')# return the text for the hi-lo temperatures
+
+#%%
+p = requests.get('https://www.wunderground.com/weather/us/ny/10001')
+s = BeautifulSoup(p.content, 'html5lib')
+#%%
 
 def getDailyTemp(filename): 
   # the source file header has the list of zip codes I want to keep track. 
@@ -98,16 +103,23 @@ def getDailyTemp(filename):
   df_last = pd.read_csv(filename, header=0, index_col=0, date_parser=lambda x: datetime.datetime.strptime(x, '%Y-%m-%d') )
 
   df_new = pd.DataFrame(columns=df_last.columns ) # set a new empty dataframe for new day's data
-  df_new.index.name = df_last.index.name # set the index name 
-  df_new = df_new.append(pd.Series(name=tdaystr)) # add a blank row with today's date as index
+  df_new.index.name = df_last.index.name # set the index name (setting it to 'Date'))
+  df_new = df_new.append(pd.Series(name=tdaystr)) # add a blank row with today's date as index 
 
   # ######  QUESTION 3      QUESTION 3      QUESTION 3   ##########
-
   # write your codes here 
   # You can run the current codes to see what is the df_new and df_last look like. 
   # Need to get the new Temperatures for each location/zip, and put them in the new data frame 
   # Then insert that df_new to the top of df_last.
-
+  temp = [] #will contain the hi-lo of all zips. 
+  for i in df_new.columns:
+    link = getUrl(i)
+    s = getSoup(link)
+    temp.append(getTempHiLo(s))
+    
+  df_new.iloc[len(df_new)-1] = temp
+  df_last = pd.concat([df_new, df_last])
+  
   # ######  END of QUESTION 3    ###   END of QUESTION 3   ##########
   
   df_last.index = pd.to_datetime(df_last.index, format='%Y-%m-%d') # row index = 'Date', fixing formatting issue. Without this line, the dates on dataframe will be recorded as 'yyyy-mm-dd 00:00:00' to the datafame
