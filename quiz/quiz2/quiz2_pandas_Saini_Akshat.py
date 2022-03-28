@@ -1,6 +1,6 @@
 #%%[markdown]
 # Quiz 2
-# Name:  
+# Name:  Akshat Saini
 # 
 # You may use web search, notes, etc. 
 # Do not use help from another human. If you use help from another student, 
@@ -39,22 +39,31 @@ print(df.head())
 
 #%%
 # 1. what is the total fare paid by all the passengers on board? 
-#
-
-
+fare_sum = df.loc[:,'fare'].sum()
+print(fare_sum)
+#Total sum paid by the passengers is 28693.94
 #%%
 # 2. create a boolean array/dataframe for female passengers. Use broadcasting and filtering 
 # to obtain a subset of females, and find average age of the female passengers on board 
 # 
-
+fem_bool = df.loc[:,'sex'] == 'female'
+fem = df[fem_bool]
+fem['age'].mean()
+#Average age of females was 23.204
 #%%
 # 3. create a boolean array/dataframe for survived passengers. Use broadcasting and filtering 
 # to obtain a subset of survivers, and find the average age of the survived passengers on board? 
 # 
+surv_bool = df.loc[:,'survived'] == 1
+survived = df[surv_bool]
+survived['age'].mean()
 
+#Average age of survived passengers was 24.03. This includes both females and males. 
 #%%
 # 4. What is the average age of the female passengers who survived? 
 # 
-
+fem_surv_bool = fem.loc[:,'survived'] == 1
+fem[fem_surv_bool].loc[:,'age'].mean()
+#Average age of suvived female passengers was 24.39 
 # %%
 
