@@ -209,3 +209,5 @@ plt.show()
 # Otherwise average income is identical between the two worlds.(60k)
 # More infomation might have been useful such as crime statistics, weather, and happiness quotient/life expectency etc. But solely based on the given information, World 2 is probably close to what we are seeking. But World 1 is still very livable. 
 # We create our own utopia with family and friends and that can be created anywhere, even in a jungle. 
+# %%
+
