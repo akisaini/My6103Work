@@ -2,6 +2,7 @@
 # To add a new markdown cell, type '#%% [markdown]'
 
 #%%
+from statistics import mean
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -62,7 +63,9 @@ world2.describe()
 # The mean age in both the worlds is 44 years for the population. 
 # Years of education is 15 years in both worlds as well. 
 #
-#
+# We could use pivot table here to capture gender mean values for certain variables like age00 or income00 etc. , but grouping should work better. 
+gender_pivot = pd.pivot_table(data = world1, index = 'gender', values = 'age00', aggfunc= 'mean')
+print(gender_pivot)
 # grouping gender and comparing the variables in different worlds using aggregate function 'sum' and 'mean':
 grouped1 = world1.groupby('gender').agg([np.sum, np.mean])
 print(grouped1)
@@ -198,15 +201,17 @@ plt.show()
 
 # %%
 
-#Summary:
+#Summary and Conclusion: 
 
-# Population and other variables like marital, ethinicity, age and education are very identical between the two worlds. 
+# Population and other variables like marital status, ethinicity, age and education are very identical between the two worlds. 
+# 
+# Below findings stand out: 
 #
-# Gender income gap exists in world 1.
-# Industry gap between genders can be noticed in world 1. 
-# Avg income is same for men and women in world 2. 
-# Income gap of 11k in world 1. 
-# Otherwise average income is identical between the two worlds.(60k)
+# Gender income gap exists in world 1. Mean annual income00 for men tends to be more than women. 
+# Industry division/gap between genders can be noticed in world1. 
+# Avg income is nearly same for men and women in world 2. 
+# There exists a mean annual Income gap of 11k in world 1. 
+# When not considering gender, average annual income is identical between the two worlds.(60k) 
 # More infomation might have been useful such as crime statistics, weather, and happiness quotient/life expectency etc. But solely based on the given information, World 2 is probably close to what we are seeking. But World 1 is still very livable. 
 # We create our own utopia with family and friends and that can be created anywhere, even in a jungle. 
 # %%
