@@ -56,53 +56,55 @@ dfhappy = dm.api_dsLand('Happy')
 # Checking the different categories in each variable:
 print(dfhappy.groupby(['marital']).count().reset_index()) 
 # 6 separate categories:
-# Divorced: presented as '1'
-# Married: presented as '2'
-# Never-Married: presented as '3'
-# Separated: presented as '4'
-# Widowed: presented as '5'
-# No answer: presented as 'NA'
+# No answer
+# Divorced
+# Married
+# Never-Married
+# Separated
+# Widowed
+
 # %%
 print(dfhappy.groupby(['income']).count().reset_index()) 
 # 15 different categories:
-# No answer: presented as '0'
-# $8000 to 9999: presented as '1'
-# $15000 - 19999: presented as '2'
-# $25000 or more: presented as '3'
-# $20000 - 24999: presented as '4'
-# $10000 - 14999: presented as '5'
-# Refused: presented as '6'
-# $1000 to 2999: presented as '7' 
-# Don't know: presented as '8'
-# Lt $1000 or (less than $1000): presented as '9'
-# $5000 to 5999: presented as '10'
-# $7000 to 7999: presented as '11'
-# $3000 to 3999: presented as '12'
-# $4000 to 4999: presented as '13'
-# $6000 to 6999: presented as '14'
+# No answer
+# $1000 to 2999
+# $10000 - 14999
+# $15000 - 19999
+# $20000 - 24999
+# $25000 or more
+# $3000 to 3999
+# $4000 to 4999
+# $5000 to 5999
+# $6000 to 6999
+# $7000 to 7999
+# $8000 to 9999
+# Don't know
+# Lt $1000 or (less than $1000)
+# Refused
 
 # %%
 print(dfhappy.groupby(['childs']).count().reset_index()) 
 # Total 10 categories:
-# 0: presented as '1'
-# 1: presented as '2'
-# 2: presented as '3'
-# 3: presented as '4'
-# 4: presented as '5'
-# 5: presented as '6'
-# 6: presented as '7'
-# 7: presented as '8'
-# Eight or m: presented as '9'
-# Dk na: presented as 'NA'
+# 0: presented as '0'
+# 1: presented as '1'
+# 2: presented as '2'
+# 3: presented as '3'
+# 4: presented as '4'
+# 5: presented as '5'
+# 6: presented as '6'
+# 7: presented as '7'
+# Eight or m: presented as '8'
+# Dk na: presented as pd.NA
 # %%
 print(dfhappy.groupby(['happy']).count().reset_index()) 
 # 6 differnet categories:
+# No answer - presented as '0'
 # Dont know - presented as '1'
 # Not applicable - presented as '2'
 # Not too happy - presented as '3'
 # Pretty happy - presented as '4'
 # Very Happy - presented as '5'
-# No answer - presented as 'NA'
+
 # %%
 print(dfhappy.groupby(['ballet']).count().reset_index()) 
 # 4 differnet categories:
@@ -113,40 +115,98 @@ print(dfhappy.groupby(['ballet']).count().reset_index())
 
 
 #%%
-# Changing column data to ordinal/categorical values matching different categories:
+# Changing column data to ordinal/numeric values matching different categories:
 dfhappy['ballet'].replace(to_replace=['Ballot a', 'Ballot b', 'Ballot c', 'Ballot d'], value=['a', 'b', 'c', 'd'], inplace=True)
 
-dfhappy['happy'].replace(to_replace=['Don\'t know', 'Not applicable', 'Not too happy', 'Pretty happy', 'Very happy', 'No answer'], value=['1', '2', '3', '4', '5', pd.NA], inplace=True)
+dfhappy['happy'].replace(to_replace=['Don\'t know', 'Not applicable', 'Not too happy', 'Pretty happy', 'Very happy', 'No answer'], value=['1', '2', '3', '4', '5', '0'], inplace=True)
+dfhappy['happy'] = pd.to_numeric(dfhappy['happy'])
                           
-dfhappy['childs'].replace(to_replace=['0','1','2','3','4','5','6','7','Eight or m','Dk na'], value=['1', '2', '3', '4', '5', '6', '7', '8', '9', pd.NA], inplace=True)
+
+#dfhappy['income'].replace(to_replace=['$1000 to 2999', '$10000 - 14999', '$15000 - 19999', '$20000 - 24999', '$25000 or more', '$3000 to 3999', '$4000 to 4999', '$5000 to 5999', '$6000 to 6999', '$7000 to 7999', '$8000 to 9999', 'Don\'t know', 'Lt $1000', 'Refused', 'No answer'], value=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '0'], inplace=True)
 
 
-dfhappy['marital'].replace(to_replace=['Divorced', 'Married', 'Never married', 'Separated', 'Widowed', 'No answer'], value=['1', '2', '3', '4', '5', pd.NA], inplace=True)                    
-                                                  
+# Fixing the 'childs' column by converting the 'Eight or more' value to 8 and 'Dk na' value to NA:
+
+dfhappy['childs'].replace(to_replace=['Dk na', 'Eight or m'], value=[pd.NA, '8'], inplace=True)
+dfhappy['childs'] = pd.to_numeric(dfhappy['childs'])
+
+
+# Fixing the 'hrs1' column by converting the 'Dont Know' value to  and 'Not applicable' value to  and 'No answer' value to NA:
+
+dfhappy['hrs1'].replace(to_replace=['Don\'t know', 'Not applicable', 'No answer'], value=[pd.NA, pd.NA, pd.NA], inplace=True)
+dfhappy['hrs1'] = pd.to_numeric(dfhappy['hrs1'])
+
+
 #%%
-# Converting column datatype to type categoric and hrs1 and income data type to numeric:
-dfhappy['marital'] = dfhappy['marital'].astype('category')
-dfhappy['childs'] = dfhappy['childs'].astype('category')
-dfhappy['happy'] = dfhappy['happy'].astype('category')
-dfhappy['ballet'] = dfhappy['ballet'].astype('category')
-dfhappy['hrs1'] = pd.factorize(dfhappy['hrs1'])[0]
-dfhappy['income'] = pd.factorize(dfhappy['income'])[0]
-# Verify data type pf variables:
+# Verify data type of variables:
 dfhappy.info()
-
-# %%
-# Checking the updated data set now: (NA values are still included.)
 dfhappy
 # %%
-# Plots using matplotlib: 
+#Plotting:
+
+# Plots using seaborn: 
 # Box plot between marital status and hrs worked:
 sns.set_style("whitegrid")
 sns.boxplot(x= 'marital', y = 'hrs1', data = dfhappy)
 plt.show()
 # %%
-# Violin plot for income vs happiness: 
+# Happiness categories:
+# Dont know - presented as '1'
+# Not applicable - presented as '2'
+# Not too happy - presented as '3'
+# Pretty happy - presented as '4'
+# Very Happy - presented as '5'
+# No answer - presented as 'NA'
+#-----------------------------------------------------------
+# Violin plot for income vs happiness:
+# Is income dependent on happiness? x/independent variable = happiness, y/dependent variable = income
 sns.set_style("whitegrid")
-sns.violinplot(x = 'income', y = 'happy', data = dfhappy)
+sns.violinplot(x = 'happy', y = 'income', data = dfhappy, split =True)
 plt.show()
 
+# %%
+# Children categories:
+# 0: presented as '0'
+# 1: presented as '1'
+# 2: presented as '2'
+# 3: presented as '3'
+# 4: presented as '4'
+# 5: presented as '5'
+# 6: presented as '6'
+# 7: presented as '7'
+# Eight or m: presented as '8'
+# Dk na: presented as pd.NA
+#----------------------------------------------------------
+# Happiness vs Number of Children - jitter plot with marital hue
+
+plot = sns.stripplot(x='happy', y='childs', hue='marital', data=dfhappy, palette='ocean', jitter=True, edgecolor='none', alpha=.60 )
+plot.get_legend().set_visible(False)
+# Put legend outside the fig 
+plt.legend(bbox_to_anchor=(1,0), loc="lower left", labelcolor='black', facecolor='white', edgecolor='black', fontsize='large')
+plt.title('Happiness vs Number of Children | Marital Status as Hue')
+# show plot
+plt.show()
+sns.despine()
+
+# %%
+
+# happy vs childs(dependent)
+# Checking if number of children is dependent on level of happiness.
+
+sns.boxplot(x ='happy', y ='childs', data = dfhappy, palette ='plasma', hue = 'marital')
+plt.legend(bbox_to_anchor=(1,0), loc="lower left", labelcolor='black', facecolor='white', edgecolor='black', fontsize='large')
+# show plot
+plt.show()
+sns.despine()
+
+# Being happy doesnt necessarily lead to more/less children. Below observations have been made from the above plot:
+
+# Married people who are 'very happy'/5 have a mean of 2 children. 
+# People who never married and who are 'very happy'/5 usually have between 0 or 1 children.
+# People who are divorced and are 'very happy'/5 have in-between 1 and 3 children with mean of 2. 
+# People who are 'not too happy'/3 and who have never married have between 0 and 2 children. 
+# People who are 'not too happy'/3 and who are divorced have between 1 and 3 children with mean of 2. This is similar to people who are 'very happy' and 'divorced'.  
+# People who are 'not too happy'/3 and who are married have between 1 and 3 children with mean of 2. This is again similar to 'very happy'/5 people who are married. 
+
+#summary: People who are 'not too happy' had children in the same range as compared to people who are 'very happy'. 
 # %%
