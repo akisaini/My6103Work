@@ -646,6 +646,7 @@ import sklearn
 from sklearn.preprocessing import scale
 
 wine = sklearn.datasets.load_wine()
+#%%
 for i in (3,5,7):
   knnn = i
   x_wine = wine.data
