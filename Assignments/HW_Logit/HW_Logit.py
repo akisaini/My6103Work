@@ -257,6 +257,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.2, random
 print(y_train.value_counts()) # 80% as training set   
 print(y_test.value_counts()) # 20% as test set
 
+# dropping columns that do not affect the target variable like the 'name' column. 
+
+X_train_up = X_train.drop('name', axis = 'columns')
+
+# convert team names to dummy variables for model creation: 
+X_train_updated = pd.get_dummies(X_train_up, columns=['AwayTeam', 'HomeTeam', 'kickteam', 'def'])
+
+
 #%%
 
 # creating a logistic model:
