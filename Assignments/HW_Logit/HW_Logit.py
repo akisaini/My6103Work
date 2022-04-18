@@ -240,6 +240,33 @@ homeloss_counts.plot(kind = 'bar', color = 'lightred')
 # ## Question 6  
 # Using the SciKitLearn library, build a logistic regression model overall (not individual team or kicker) to predict the chances of a successful field goal. What variables do you have in your model? 
 # 
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+#%%
+# Separating the target variable(GOOD) and the regressors into two different data sets. 
+
+X = nfl.drop('GOOD', axis = 'columns') # regressor set
+y = nfl['GOOD'] # target set
+
+#%%
+# Creating test/train data sets from the above set using sklearn train_test_split: 80% train, 20% test 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.2, random_state= 15)
+
+print(y_train.value_counts()) # 80% as training set   
+print(y_test.value_counts()) # 20% as test set
+
+#%%
+
+# creating a logistic model:
+
+nflmodel = LogisticRegression(max_iter= 100)
+
+nflmodel.fit(X_train, y_train) 
+#%%a
+
+# 
 # ## Question 7  
 # Someone has a feeling that home teams are more relaxed and have a friendly crowd, they should kick better field goals. Use your model to find out if that is subtantiated or not. 
 # 
