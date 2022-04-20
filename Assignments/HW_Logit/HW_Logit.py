@@ -104,7 +104,6 @@ axes[1] = sns.boxplot(x = titanic['age'], y = titanic['sex'], hue = titanic['sur
 axes[1].legend(prop={'size': 6.6})
 axes[1].set_title('Boxplot: Gender vs Age | Survival Hue')
 
-
 fig.tight_layout()
 plt.show()
 
