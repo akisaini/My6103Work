@@ -16,6 +16,19 @@
 #
 # Check the shape and data type, make sure everything looks fine.
 #
+#%%
+import pandas as pd
+import numpy as np
+import os
+
+df = pd.read_csv('mnist_train.csv', header = None)
+dict = {df.columns[i+1]: 'x'+str(i) for i in range(784)}
+df = df.rename(columns = dict)
+df.columns.values[0] = 'y_target'
+
+df.head()
+
+#%%
 # ## Question 2: Preparing the data
 # On my system, if I use all 60k observations, it took a long time to run the classifiers. 
 # I ended up retaining only 8k observations. They are already randomized. The first 
