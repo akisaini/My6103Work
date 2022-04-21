@@ -131,3 +131,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Assignments/HW_classifier/mnist_train.csv
