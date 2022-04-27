@@ -49,13 +49,31 @@ print("\nReady to continue.")
 #
 
 #%% [markdown]
+# *What is a utopian society?*
+# The concept of utopia refers to a perfect or ideal civilization. It typically describes an imaginary community or society that possesses highly desirable or nearly perfect qualities for its members.
+# Utopias focus on - amongst other things - equality, in such categories as economics, government and justice, with the method and structure of proposed implementation varying based on ideology. 
+# There is no consensus as to exactly what a utopia should look like, but values like freedom, security, equality, and enlightened thinking are all common features in utopian discussions and literature.
+
+# *Utopian Society Ideals:*
+# Theoretical utopian societies usually provide their citizens with equal rights, a life without fear, economic security, and collective or government-provided welfare for all.
+
+# Some common utopia examples to relate with include scenarios like:  
+# * The Federation in the Star Trek series. 
+# * The Capital in The Hunger Games series, a place of luxury and freedom.
+# * England in Aldous Huxley's Brave New World, a place with no wars or hunger but also no emotion.
+
+# In the 2021 Best Countires in the World Ranking, the overall ranking of best countries measured global performace on a variety of metrics, amongst which 'literacy' was one of the top criterias, followed by 'equality/racial equality' and an 'economically stable job market'.
+
+# In our model, we will try to focus more on the above three aspects to compare the 2 different worlds to the definition of Utopia. 
+
 # *Basic EDA:*
-#
 # Using the info function to find the general datatypes and information of all the variables in world1 and world2 data sets:
 #
+#%%
 world1.info()
 world2.info()
 #
+#%%
 # using the describe method to compare 'mean' values in differenr variables:
 #
 world1.describe()
@@ -102,6 +120,202 @@ world2_women = world2.loc[:,:][gen2_bool2]
 # In world2 there are *11690 men* and *12310 women*.
 #
 # Population is distributed nearly equally. 
+#%%
+# Define ethnic data sets:
+# Creating a dataset that is grouped in terms of column ethnic: 
+
+ethnic_grouped1 = world1.groupby('ethnic')
+ethnic_grouped2 = world2.groupby('ethnic')
+w1_ethnic_0 = ethnic_grouped1.get_group(0)
+w1_ethnic_1 = ethnic_grouped1.get_group(1)
+w1_ethnic_2 = ethnic_grouped1.get_group(2)
+w2_ethnic_0 = ethnic_grouped2.get_group(0)
+w2_ethnic_1 = ethnic_grouped2.get_group(1)
+w2_ethnic_2 = ethnic_grouped2.get_group(2)
+
+#%%
+#define data
+data = [w1_ethnic_0.shape[0], w1_ethnic_1.shape[0], w1_ethnic_2.shape[0]]
+labels = ['ethnic_0', 'ethnic_1', 'ethnic_2']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('pastel')[0:5]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart comparing population of different ethnicities in World 1')
+plt.show()
+
+data = [w2_ethnic_0.shape[0], w2_ethnic_1.shape[0], w2_ethnic_2.shape[0]]
+labels = ['ethnic_0', 'ethnic_1', 'ethnic_2']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('husl')[3:6]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart comparing population of different ethnicities in World 2')
+plt.show()
+
+# Different ethnicities are equally divided in terms of population in both the worlds! No one ethnicity is dominant in either world. 
+
+#%%
+# Now, comparing the average statistics - like age, education years, industry preference and income between different ethnicities. 
+
+# 1) Age statistics: 
+
+data = {'Ethnic_0':w1_ethnic_0['age00'].mean(), 'Ethnic_1':w1_ethnic_1['age00'].mean(), 'Ethnic_2':w1_ethnic_2['age00'].mean()}
+courses = list(data.keys())
+values = list(data.values())
+  
+fig = plt.figure(figsize = (10, 5))
+ 
+# creating the bar plot
+plt.bar(courses, values, color ='green',
+        width = 0.3)
+plt.title('Bar Plot comparing avg. Age of different ethnicities in World 1')
+plt.show()
+
+
+data = {'Ethnic_0':w2_ethnic_0['age00'].mean(), 'Ethnic_1':w2_ethnic_1['age00'].mean(), 'Ethnic_2':w2_ethnic_2['age00'].mean()}
+courses = list(data.keys())
+values = list(data.values())
+  
+fig = plt.figure(figsize = (10, 5))
+ 
+# creating the bar plot
+plt.bar(courses, values, color ='teal',
+        width = 0.3)
+plt.title('Bar Plot comparing avg. Age of different ethnicities in World 2')
+plt.show()
+# Average Age between ethnicities is same for all three ethnicities in both the worlds!
+
+#%%
+# 2) Education years statistics: 
+
+data = {'Ethnic_0':w1_ethnic_0['education'].mean(), 'Ethnic_1':w1_ethnic_1['education'].mean(), 'Ethnic_2':w1_ethnic_2['education'].mean()}
+courses = list(data.keys())
+values = list(data.values())
+  
+fig = plt.figure(figsize = (10, 5))
+ 
+# creating the bar plot
+plt.bar(courses, values, color ='maroon',
+        width = 0.3)
+plt.title('Bar Plot comparing avg. education of different ethnicities in World 1')
+plt.show()
+
+
+data = {'Ethnic_0':w2_ethnic_0['education'].mean(), 'Ethnic_1':w2_ethnic_1['education'].mean(), 'Ethnic_2':w2_ethnic_2['education'].mean()}
+courses = list(data.keys())
+values = list(data.values())
+  
+fig = plt.figure(figsize = (10, 5))
+ 
+# creating the bar plot
+plt.bar(courses, values, color ='orange',
+        width = 0.3)
+plt.title('Bar Plot comparing avg. education of different ethnicities in World 2')
+plt.show()
+
+# Average Education between ethnicities is same for all three ethnicities in both the worlds!
+#%%
+# Lets Check industry preference within ethnicities. This is to check if one ethnicity prefers a particular industry over another when compared to a different ethnicity in world 1. 
+
+#   0. leisure n hospitality  
+#   1. retail   
+#   2. Education   
+#   3. Health   
+#   4. construction   
+#   5. manufacturing   
+#   6. professional n business   
+#   7. finance   
+
+data = [w1_ethnic_0[w1_ethnic_0['industry']==0].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==1].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==2].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==3].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==4].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==5].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==6].shape[0], w1_ethnic_0[w1_ethnic_0['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('husl')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 0\'s preference in Industry in World 1')
+plt.show()
+
+data = [w1_ethnic_1[w1_ethnic_1['industry']==0].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==1].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==2].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==3].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==4].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==5].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==6].shape[0], w1_ethnic_1[w1_ethnic_1['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('rocket')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 1\'s preference in Industry in World 1')
+plt.show()
+
+data = [w1_ethnic_2[w1_ethnic_2['industry']==0].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==1].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==2].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==3].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==4].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==5].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==6].shape[0], w1_ethnic_2[w1_ethnic_2['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('viridis')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 2\'s preference in Industry in World 1')
+plt.show()
+
+# It can be seen that ethnicity 0 has more people working in Health, Retail and Education sectors than manufacturing or Finance. 
+
+# Ethnicity 1 has more people working in Hospitality, Health, Retail and Construction sectors. And very little in Manufacturing or Finance. 
+
+# Ethnicity 2 has majority people working in 'Professional n Business', Manufacturing and Finance. And just 1% people working in Construction.   
+
+#%% 
+
+# Above analysis in world 2:
+
+data = [w2_ethnic_0[w2_ethnic_0['industry']==0].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==1].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==2].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==3].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==4].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==5].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==6].shape[0], w2_ethnic_0[w2_ethnic_0['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('husl')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 0\'s preference in Industry in World 2')
+plt.show()
+
+data = [w2_ethnic_1[w2_ethnic_1['industry']==0].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==1].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==2].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==3].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==4].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==5].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==6].shape[0], w2_ethnic_1[w2_ethnic_1['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('rocket')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 1\'s preference in Industry in World 2')
+plt.show()
+
+data = [w2_ethnic_2[w2_ethnic_2['industry']==0].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==1].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==2].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==3].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==4].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==5].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==6].shape[0], w2_ethnic_2[w2_ethnic_2['industry']==7].shape[0]]
+labels = ['Leisure n Hospitality', 'Retail', 'Education' ,'Health', 'Construction', 'Manufacturing', 'Professional n Business', 'Finance']
+
+#define Seaborn color palette to use
+colors = sns.color_palette('viridis')[0:7]
+
+#create pie chart
+plt.pie(data, labels = labels, colors = colors, autopct='%.0f%%')
+plt.title('Pie chart showing Ethnicity 2\'s preference in Industry in World 2')
+plt.show()
+
+# Ethnicity 0 has equal preference in Retail, Professional n Business, and Health. And prefers Finance the least (8%). But preference is well divided over the sectors. 
+
+# Ethnicity 1 has higher preference for Retail, Professional n Business, Education, Manufacturing, Health over Construction or Finance (9%). But still well divided. 
+
+# Ethnicity 2 has higher preference for Retail, Education, Health, Manufacturing, Professional n Business as compared to construction or finance (8%). But still well divided. 
+
+
+# *Overall, ethnicities in World 2 are better divided within the different sectors as compared to world 1.*  
+
 
 # %%
 # Now creating gender wise plots to understand the situation at a
@@ -198,6 +412,26 @@ plt.show()
 # Leisure n hospitality(0) is a little more common among women compared to men in world 2.
 # Comparing the two worlds based on employment sectors, world 2 is better distributed between the genders than world 1 and is more welcoming for everyone.  
 
+#%%
+# income gender and ethnic
+
+fig, ax = plt.subplots(2,2,figsize = (20,15))
+sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world1, ax = ax[0,0])
+
+sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world2, ax = ax[0,1])
+
+sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world1, ax =ax[1,0])
+
+
+sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world2, ax = ax[1,1])
+
+'''
+sns.catplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world2, ax = ax[0,1])
+
+sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world1, ax =ax[1,0])
+
+
+sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world2, ax = ax[1,1])'''
 
 # %%
 
@@ -216,3 +450,4 @@ plt.show()
 # We create our own utopia with family and friends and that can be created anywhere, even in a jungle. 
 # %%
 
+# Different ethnicities are equally divided in terms of population in both the worlds! No one ethnicity is dominant in either world. 
