@@ -3,6 +3,7 @@
 
 #%%
 from statistics import mean
+from sys import platlibdir
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -160,7 +161,7 @@ plt.show()
 # Different ethnicities are equally divided in terms of population in both the worlds! No one ethnicity is dominant in either world. 
 
 #%%
-# Now, comparing the average statistics - like age, education years, industry preference and income between different ethnicities. 
+# Now, comparing the average statistics - like age, education years, industry preference different ethnicities - including both genders. 
 
 # 1) Age statistics: 
 
@@ -173,7 +174,7 @@ fig = plt.figure(figsize = (10, 5))
 # creating the bar plot
 plt.bar(courses, values, color ='green',
         width = 0.3)
-plt.title('Bar Plot comparing avg. Age of different ethnicities in World 1')
+plt.title('Bar Plot comparing avg. Age of different ethnicities in World 1', fontsize = 18)
 plt.show()
 
 
@@ -186,7 +187,7 @@ fig = plt.figure(figsize = (10, 5))
 # creating the bar plot
 plt.bar(courses, values, color ='teal',
         width = 0.3)
-plt.title('Bar Plot comparing avg. Age of different ethnicities in World 2')
+plt.title('Bar Plot comparing avg. Age of different ethnicities in World 2',fontsize = 18)
 plt.show()
 # Average Age between ethnicities is same for all three ethnicities in both the worlds!
 
@@ -202,6 +203,9 @@ fig = plt.figure(figsize = (10, 5))
 # creating the bar plot
 plt.bar(courses, values, color ='maroon',
         width = 0.3)
+plt.grid(b = True, color ='grey',
+        linestyle ='-.', linewidth = 0.5,
+        alpha = 0.2)
 plt.title('Bar Plot comparing avg. education of different ethnicities in World 1')
 plt.show()
 
@@ -215,6 +219,9 @@ fig = plt.figure(figsize = (10, 5))
 # creating the bar plot
 plt.bar(courses, values, color ='orange',
         width = 0.3)
+plt.grid(b = True, color ='grey',
+        linestyle ='-.', linewidth = 0.5,
+        alpha = 0.2)
 plt.title('Bar Plot comparing avg. education of different ethnicities in World 2')
 plt.show()
 
@@ -413,27 +420,55 @@ plt.show()
 # Comparing the two worlds based on employment sectors, world 2 is better distributed between the genders than world 1 and is more welcoming for everyone.  
 
 #%%
-# income gender and ethnic
+# Violin Plots comparing ethnicities income and industry with gender as Hue.  
 
 fig, ax = plt.subplots(2,2,figsize = (20,15))
-sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world1, ax = ax[0,0])
 
-sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world2, ax = ax[0,1])
+sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world1, split = True, inner = 'quartile', ax = ax[0,0])
+ax[0,0].set_title('Ethnic Vs Industry - World 1', fontsize = 18)
 
-sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world1, ax =ax[1,0])
+sns.violinplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world2, split = True, inner = 'quartile', ax = ax[0,1])
+ax[0,1].set_title('Ethnic Vs Industry - World 2', fontsize = 18)
+
+sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world1, split = True, inner = 'quartile', ax =ax[1,0])
+ax[1,0].set_title('Ethnic Vs Income - World 1', fontsize = 18)
+
+sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world2, split = True, inner = 'quartile', ax = ax[1,1])
+ax[1,1].set_title('Ethnic Vs Income - World 2', fontsize = 18)
+
+# We can observe that World 2 is equally divided when it comes to earnings and industry preference within the genders in the different ethinicities. We can also make the observation that all three ethnicities have similar quartile ranges for both income industry. 
 
 
-sns.violinplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world2, ax = ax[1,1])
-
-'''
-sns.catplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "violin", data = world2, ax = ax[0,1])
-
-sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world1, ax =ax[1,0])
-
-
-sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data = world2, ax = ax[1,1])'''
+# In world 1, however, things are more divided. From the violin plots, we can clearly observe that Women of ethnicity 2 are more involved in industry sectors 5,6,and 7 as compared to women in ethnicity 1 and 0. Same can be said for men. 
+# When it comes to earnings, men of ethnicity 2 earn more than men of ethnicity 0 and 1. Also, Their income is spread over a wider range, with there being the highest number of ethnicity 3 men earning high wages. 
 
 # %%
+# World 1: 
+
+
+sns.boxenplot(x = 'ethnic', y = 'education', hue = 'gender', data = world1, palette='husl')
+plt.title('Ethnic vs Education years - World 1', fontsize = 20)
+plt.show()
+
+sns.catplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "boxen", col = 'marital', data = world1, palette='YlOrBr')
+plt.show()
+
+sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "boxen", col = 'marital', data = world1, palette='jet_r')
+plt.show()
+
+#%%
+
+# World 2: 
+
+sns.boxenplot(x = 'ethnic', y = 'education', hue = 'gender', data = world2, palette='magma_r')
+plt.title('Ethnic vs Education years - World 2', fontsize = 20)
+
+sns.catplot(x = 'ethnic', y = 'industry', hue = 'gender', kind = "boxen", col = 'marital', data = world2, palette='autumn_r')
+
+
+sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "boxen", col = 'marital', data = world2, palette='viridis_r')
+
+plt.show()
 
 #Summary and Conclusion: 
 
@@ -446,7 +481,8 @@ sns.catplot(x = 'ethnic', y = 'income00', hue = 'gender', kind = "violin", data 
 # Avg income is nearly same for men and women in world 2. 
 # There exists a mean annual Income gap of 11k in world 1. 
 # When not considering gender, average annual income is identical between the two worlds.(60k) 
-# More infomation might have been useful such as crime statistics, weather, and happiness quotient/life expectency etc. But solely based on the given information, World 2 is probably close to what we are seeking. But World 1 is still very livable. 
+# More infomation might have been useful such as crime stati
+# stics, weather, and happiness quotient/life expectency etc. But solely based on the given information, World 2 is probably close to what we are seeking. But World 1 is still very livable. 
 # We create our own utopia with family and friends and that can be created anywhere, even in a jungle. 
 # %%
 
