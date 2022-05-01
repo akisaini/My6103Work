@@ -2,6 +2,8 @@
 # To add a new markdown cell, type '#%% [markdown]'
 
 #%%
+from pyexpat import model
+from matplotlib import axis
 import numpy as np
 import pandas as pd
 import dm6103 as dm
@@ -24,7 +26,7 @@ print("\nReady to continue.")
 # Having an accurate model (or not) however does not tell us if the worlds are 
 # utopia or not. Is it possible to connect these concepts together? (Try something called 
 # "feature importance"?)
-# 
+#
 # Data dictionary:
 # * age00: the age at the time of creation. This is only the population from age 30-60.  
 # * education: years of education they have had. Education assumed to have stopped. A static data column.  
@@ -42,6 +44,130 @@ print("\nReady to continue.")
 #   6. professional n business   
 #   7. finance   
 # 
+#%%
+# Random Forrest Classifier:
+# Let us create our first model using random forest classifier with ethnic as the target variable. 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
+#from xgboost import XGBClassifier
+
+# For world 1:
+
+X = world1.drop(['ethnic'], axis = 1)
+y = world1['ethnic']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.2, random_state=15)
+
+model1 = RandomForestClassifier()
+model1.fit(X_train, y_train)
+model1_y_pred = model1.predict(X_test)
+model1_cm = confusion_matrix(y_test, model1_y_pred)
+print(model1_cm)
+cr_1 = classification_report(y_test, model1_y_pred)
+print(cr_1)
+
+# Support Vector Classifier:
+model2 = SVC()
+model2.fit(X_train, y_train)
+model2_y_pred = model2.predict(X_test)
+model2_cm = confusion_matrix(y_test, model2_y_pred)
+print(model2_cm)
+cr_2 = classification_report(y_test, model2_y_pred)
+print(cr_2)
+
+# Classification tree:
+model3 = DecisionTreeClassifier()
+model3.fit(X_train, y_train)
+model3_y_pred = model3.predict(X_test)
+model3_cm = confusion_matrix(y_test, model3_y_pred)
+print(model3_cm)
+cr_3 = classification_report(y_test, model3_y_pred)
+print(cr_3)
+
+# All three models perform similarly with f1 score and accuracy in the range of 40% to 45%.
+#
+# This signifies that the ebove models are only 40-45% accurate in predicting the ethnicity of a person based on information like income, age, gender, education years and industry. 
+# 
+#
+# Feature Importance:
+# Let us use feature importance to check what variables had more variation towards the target variable: 
+import matplotlib.pyplot as plt
+importance = model1.feature_importances_
+importance=np.sort(importance)
+# summarize feature importance
+
+imp_df = pd.DataFrame({'Feature': X.columns, 'Score': importance})
+print(imp_df)
+# plot feature importance
+plt.bar([x for x in range(len(importance))], importance)
+plt.show()
+#
+# From the values and the plot, we can observe that income and industry are the better predictors for ethnicity. 
+#
+# This connects with our findings in the mini-project which clearly saw the division in industry between different ethnicities in world 1. 
+#
+#%%
+# For World 2:
+
+X = world2.drop(['ethnic'], axis = 1)
+y = world2['ethnic']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.2, random_state=15)
+
+model1_w2 = RandomForestClassifier()
+model1_w2.fit(X_train, y_train)
+model1_w2_y_pred = model1_w2.predict(X_test)
+model1_w2_cm = confusion_matrix(y_test, model1_w2_y_pred)
+print(model1_cm)
+cr_1_w2 = classification_report(y_test, model1_w2_y_pred)
+print(cr_1_w2)
+
+# Support Vector Classifier:
+model2_w2 = SVC()
+model2_w2.fit(X_train, y_train)
+model2_w2_y_pred = model2_w2.predict(X_test)
+model2_w2_cm = confusion_matrix(y_test, model2_w2_y_pred)
+print(model2_w2_cm)
+cr_2_w2 = classification_report(y_test, model2_w2_y_pred)
+print(cr_2_w2)
+
+# Classification tree:
+model3_w2 = DecisionTreeClassifier()
+model3_w2.fit(X_train, y_train)
+model3_w2_y_pred = model3_w2.predict(X_test)
+model3_w2_cm = confusion_matrix(y_test, model3_w2_y_pred)
+print(model3_w2_cm)
+cr_3_w2 = classification_report(y_test, model3_w2_y_pred)
+print(cr_3_w2)
+
+# All three models perform similarly with f1 score and accuracy between 30 and 35%.
+#
+# This signifies that the ebove models are 30-35% accurate in predicting the ethnicity of a person based on information like income, age, gender, education years and industry. 
+# 
+#
+# Feature Importance:
+# Let us use feature importance to check what variables had more variation towards the target variable: 
+import matplotlib.pyplot as plt
+importance = model1_w2.feature_importances_
+importance = np.sort(importance)
+# summarize feature importance
+
+imp_df_w2 = pd.DataFrame({'Feature': X.columns, 'Score': importance})
+print(imp_df_w2)
+# plot feature importance
+plt.bar([x for x in range(len(importance))], importance)
+plt.show()
+#
+# From the values and the plot, we can observe that income and industry are the better predictors for ethnicity even for world 2. 
+# 
+#
+# For both the worlds feature importance suggests that income and industry are the better predictors to the target variable 'ethnic'. However, with prior information from the mini-project visualizations, we can judge that world 1 is more divided as industry and income have the highest importance values and we know that world 1 had unequal distribution of income and industry within ethnicities. 
+#
+# Just with these models we cannot judge which world is utopia or not, as feature importance for both the worlds, even world 2 which is fairly and equally divided between ethnicities, suggests income and industry as the highest predictors. 
+# Parallel information like plots and graphs can help process the information better and even form a connection with the model that we can understand.  
+ 
 
 
 #%% [markdown]
