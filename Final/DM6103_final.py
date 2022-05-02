@@ -2,7 +2,6 @@
 # To add a new markdown cell, type '#%% [markdown]'
 
 #%%
-from pyexpat import model
 from matplotlib import axis
 import numpy as np
 import pandas as pd
@@ -326,13 +325,15 @@ class myModel:
     # the right codes should be no longer than a few lines.
     # If possible, please also consider the fact that the person is getting older by the month. 
     # The variable age value keeps changing as we progress with the future prediction.
-    return # ??? need to return the income level after n months.
-
-
+    f = self.predictGrowthFactor(person)*n
+    
+    # return the income level after n months.
+    return (person['income']*f)
+  
 
 print("\nReady to continue.")
 
-#%%
+
 # SAMPLE CODES to try out the model
 utopModel = myModel( { "gender": False, "ethnic": False } ) # no bias Utopia model
 biasModel = myModel( { "gender": True, "ethnic": True } ) # bias, flawed, real world model
@@ -349,7 +350,7 @@ print("\nReady to continue.")
 # age: 30-60, although there is no hard limit what you put in here.
 # income: no real limit here.
 
-months = 12 # Try months = 1, 12, 60, 120, 360
+months = 1 # Try months = 1, 12, 60, 120, 360
 # In the ideal world model with no bias
 plato = Person( { "age": 58, "education": 20, "gender": 1, "marital": 0, "ethnic": 2, "industry": 7, "income": 100000 } )
 print(f'utop: {utopModel.predictGrowthFactor(plato)}') # This is the current growth factor for plato
@@ -359,7 +360,7 @@ print(f'utop: {utopModel.predictIncome(plato)}') # This is the income after 1 mo
 #
 # If plato ever gets a raise, or get older, you can update the info with a dictionary:
 # plato.update( { "age": 59, "education": 21, "marital": 1, "income": 130000 } )
-
+#%%
 # In the flawed world model with biases on gender and ethnicity 
 aristotle = Person( { "age": 58, "education": 20, "gender": 1, "marital": 0, "ethnic": 2, "industry": 7, "income": 100000 } )
 print(f'bias: {biasModel.predictGrowthFactor(aristotle)}') # This is the current growth factor for aristotle
@@ -388,7 +389,10 @@ print("\nReady to continue.")
 # 
 # Answer this in terms of distribution of income only. I don't care about 
 # other utopian measures in this question here. 
-# 
+
+world2['incomefinal'] = world2.apply(lambda x: utopModel.predictFinalIncomeW2(x), axis = 1)
+
+
 
 #%% 
 # # Reverse Action (Part IV - 25%)
