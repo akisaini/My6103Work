@@ -3,7 +3,7 @@ import os
 import numpy as np 
 import pandas as pd 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+#from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow import keras
 # %%
@@ -24,5 +24,28 @@ model.compile(optimizer = 'adam',
               metrics = ['accuracy']
 )
 
-model.fit(X_train, y_train, epochs = 500)
+model.fit(X_train, y_train, epochs = 100)
+#%%
+model.evaluate(X_test, y_test)
+y_pred = model.predict(X_test)
+#%%
+coef, intercept = model.get_weights()
+print(coef)
+print(intercept)
+# %%
+# retrieving weights and bias from scratch. -  Manual Method. 
+
+# 'activation' variable in the tensorflow model. 
+def sigmoid(x):
+    import math
+    return 1/(1+math.exp(x))
+
+# Prediction funciton takes in w1, w2, and the bias(intercept) and tells whether a person will buy insurance or not. 
+def prediction_function(age, affordibility):
+   weighted_sum =  coef[0]*age+coef[1]*affordibility + intercept
+   return sigmoid(weighted_sum)
+
+
+
+
 # %%
