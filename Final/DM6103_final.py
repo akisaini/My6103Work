@@ -325,11 +325,15 @@ class myModel:
     # the right codes should be no longer than a few lines.
     # If possible, please also consider the fact that the person is getting older by the month. 
     # The variable age value keeps changing as we progress with the future prediction.
-    f = self.predictGrowthFactor(person)*n
-    
+    #
+    #This is similar to compound intrest where the growth factor can be treated as the intrest amount and income as the principal amt. Intrest for the first year is x. For the nth year is x**n
+    #
+    #f = self.predictGrowthFactor(person) ** n
     # return the income level after n months.
-    return (person['income']*f)
+    return person['income'] * (1+ self.predictGrowthFactor(person)/n)**(n*n/12)
   
+  
+   #P (1 + r/n) (nt
 
 print("\nReady to continue.")
 
@@ -390,9 +394,9 @@ print("\nReady to continue.")
 # Answer this in terms of distribution of income only. I don't care about 
 # other utopian measures in this question here. 
 
-world2['incomefinal'] = world2.apply(lambda x: utopModel.predictFinalIncomeW2(x), axis = 1)
+world2['incomefinal'] = world2.apply(lambda x: utopModel.predictFinalIncome(x), axis = 1)
 
-
+#aristotle = Person( { "age": 58, "education": 20, "gender": 1, "marital": 0, "ethnic": 2, "industry": 7, "income": 100000 } )
 
 #%% 
 # # Reverse Action (Part IV - 25%)
