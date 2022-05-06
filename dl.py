@@ -299,3 +299,122 @@ for i in cnnpred:
     print(np.argmax(i))
         
 # %%
+# Data Augumentation to address overfitting/imbalanced sets. (CNN - Image data)
+
+import matplotlib.pyplot as plt
+import numpy as np
+import cv2
+import os
+import PIL
+import tensorflow as tf
+
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras import Sequential
+# %%
+# Loading dataset:
+dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
+data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url,  cache_dir='.', untar=True)
+
+# %%
+# Converting data_dir into windows path lib.  - Allows to do certain things in an easier manner. - opening images using PILLOW (PIL) as it required windows dir. 
+import pathlib
+data_dir = pathlib.Path(data_dir)
+data_dir
+# %%
+roses = list(data_dir.glob('roses/*.jpg'))
+roses[:5]
+# %%
+PIL.Image.open(str(roses[0]))
+# %%
+flowers_dict = {
+    'daisy' : list(data_dir.glob('daisy/*')),
+    'dandelion' : list(data_dir.glob('dandelion/*')),
+    'roses' : list(data_dir.glob('roses/*')),
+    'sunflowers' : list(data_dir.glob('sunflowers/*')),
+    'tulips' : list(data_dir.glob('tulips/*'))
+}
+flowers_labels_dict = {
+    'roses': 0,
+    'daisy': 1,
+    'dandelion': 2,
+    'sunflowers': 3,
+    'tulips': 4
+}
+# %%
+# cv2 - opencv module -  we supply image path and it returns/converts into numpy array. 
+
+img = cv2.imread(str(flowers_dict['roses'][0]))
+img.shape
+# (240, 179, 3) - [240x179x3]  - 3 is for RGB. 
+# %%
+# Lets resize the image. 
+cv2.resize(img, (180,180)).shape
+# %%
+X = []
+y = []
+for flower_name, img in flowers_dict.items():
+    for i in img: 
+        resized_img = cv2.resize(cv2.imread(str(i)), (180,180))
+        X.append(resized_img)
+        y.append(flowers_labels_dict[flower_name])
+# %%
+X = np.array(X)
+y = np.array(y)
+# %%
+# splits at 75% by default. 
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state= 0)
+# %%
+# Scaling the values. 
+X_train = X_train/255
+X_test = X_test/255
+# %%
+# Now, building the CNN model. 
+num_classes = 5  # This is the total number of categorical classes. 
+model = Sequential([
+    # 16 means there will be 16 filters with the size of 3x3. 
+    # padding will be applied around the corners. 
+    layers.Conv2D(16,3, padding = 'same', activation = 'relu'),
+    layers.MaxPooling2D(),
+    # 32 means in the second layer there will be 32 filters, the size of 3x3. so on.
+    layers.Conv2D(32,3, padding = 'same', activation = 'relu'),
+    layers.MaxPooling2D(),
+    layers.Conv2D(64,3, padding = 'same', activation = 'relu'),
+    layers.MaxPooling2D(),
+    layers.Flatten(),
+    # Before setting up Dense network, we are supposed to flatten the values. - Dense network takes flat values. 
+    # Dense Network Setup.
+    layers.Dense(256, activation = 'relu'),
+    layers.Dense(num_classes)
+    
+])
+
+
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+
+model.fit(X_train, y_train, epochs = 15)
+# %%
+model.evaluate(X_test, y_test)
+# %%
+predictions = model.predict(X_test)
+# %%
+predictions[0]
+# %%
+# converting predictions between the range of 0 and 1 (probability score) using softmax. And then using np.argmax to get the max value which is the score. 
+score = tf.nn.softmax(predictions[0])
+# %%
+np.argmax(score)
+# 2 -> dandelion
+# Comparing with actual value.
+y_test[0]
+# 2, correct prediction. 
+# %%
+# Data Augmentation: 
+data_augmentation = keras.Sequential([
+    layers.experimental.preprocessing.RandomContrast(0.9)
+])
+# %%
+    
