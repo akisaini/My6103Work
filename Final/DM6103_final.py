@@ -2,7 +2,6 @@
 # To add a new markdown cell, type '#%% [markdown]'
 
 # %%
-from typing import final
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
@@ -316,6 +315,9 @@ class myModel:
             income < 90000) else 0.00035 if (income < 120000) else 0.00045
         # Notice that this is his/her income affecting his/her future income. It's exponential in natural.
         return effect
+    
+    
+    
 
         # ##################################################
         # end of black box / inner structure of the model  #
@@ -351,8 +353,10 @@ class myModel:
           person.update( { "age": person['age00']+count, "education": person['education'], "marital":person['marital'], "income": final_income } )
         
         return final_income
+    
       
 print("\nReady to continue.")
+
 
 
 # SAMPLE CODES to try out the model
@@ -460,6 +464,10 @@ print("\nReady to continue.")
 # other utopian measures in this question here.
 
 # In utopian setting world2 would look like:
+world2['income'] = world2['income00']
+world2['age'] = world2['age00']
+
+
 world2['incomefinal_utop'] = world2.apply(
     lambda x: utopModel.predictFinalIncome(360, x), axis=1)
 
@@ -486,12 +494,16 @@ revbiasModel = myModel({"gender": -1, "ethnic": -1})
 
 #World1
 # We will try to compare world1 stats 30 years or 360 months down the line with world2. 
+world1['income'] = world1['income00']
+world1['age'] = world1['age00']
+
 months =  360
 # months are time starting from original age (age00)
 # In the reverse world bias model/ world1:
 world1['incomefinal'] = world1.apply(
     lambda x: revbiasModel.predictFinalIncome(months, x), axis=1)
 
+print(world1)
 #%%
 # lets us compare the different models in the two worlds now: 
 import seaborn as sns
@@ -500,23 +512,96 @@ import matplotlib.pyplot as plt
 #rev bias model
 sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal', hue = 'gender', kind = 'boxen', palette='autumn_r')
 plt.ticklabel_format(style='plain', axis='y')
+plt.title('Rev Bias Model on World 1')
 
-# From the categorical plots we can observe that there is clear difference between the two genders(F/M) belonging to the three ethnicities. With females of ethnicity 1 earning the highest amount. 
+# From the categorical plots we can observe that there is some difference between the two genders(F/M) belonging to the three ethnicities. With females of ethnicity 0 earning the highest amount. 
 
 #bias model
 sns.catplot(data = world2, x = 'ethnic' , y = 'incomefinal_bias', hue = 'gender', kind = 'boxen', palette = 'jet_r')
 plt.ticklabel_format(style='plain', axis='y')
-
-# From the categorical plots we can observe that there is difference between the genders of the 3 ethnicities. This makes sense since this is the bias model where gender and ethnicity have a high bias. Men of ethnicity 2 earn the highest amount. 
+plt.title('Bias Model on World 2')
+# From the categorical plots we can observe that there is clear difference between the genders of the 3 ethnicities. This makes sense since this is the bias model where gender and ethnicity have a high bias. Men of ethnicity 2 earn the highest amount. 
 
 
 #utop model
 sns.catplot(data = world2, x = 'ethnic' , y = 'incomefinal_utop', hue = 'gender', kind = 'boxen', palette = 'husl')
 plt.ticklabel_format(style='plain', axis='y')
-
-# From the categorical plots we can observe that both the genders belonging to the three ethnicities earn about the same with minute differences. This makes sense since this is the utop model where everything is balanced. 
+plt.title('Utop Model on World 2')
+# From the categorical plots we can observe that both the genders belonging to the three ethnicities earn about the same with minute or very little differences due to outliers. This makes sense since this is the utop model where everything is balanced. 
 
 plt.show()
 
 # %%
-# There is a chance for world 1 to become like 
+# Is there a chance for world1 to become like utop world 2? 
+#
+# 30 years in the future, world1 is definitely not like the utop world 2. 
+# We can try to add another column in the world1 data set that stores the income level after 60 years or 720 months. 
+# Then we can compare that scenario with the present utop world 2. 
+
+#
+# months are time starting from original age (age00)
+# In the reverse world bias model/ world1:
+months = 720
+world1['incomefinal_60y'] = world1.apply(
+    lambda x: revbiasModel.predictFinalIncome(months, x), axis=1)
+
+print(world1)
+
+# %%
+# Plotting both boxen and violin plots for rev bias model 60 years ahead:
+sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal_60y', hue = 'gender', kind = 'boxen', palette='rocket')
+plt.ticklabel_format(style='plain', axis='y')
+plt.title('Forecast - Rev Bias Model on World1 720 months')
+
+sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal_60y', hue = 'gender', kind = 'violin', palette='Paired')
+plt.ticklabel_format(style='plain', axis='y')
+
+# We can observe from both the plots that although people earn a high salary, which is expected due to the growth factor being multiplied for 60 years, there are still differences between the two genders and the ethnicities. Female of ethnicity 0 still earn the highest amount. 
+
+# To notice more prominent changes, the current reverse bias model needs to be tweaked by changing the growth rate percentages of ethnicities and gender. 
+
+# We will try that by substituting other values in the functions and will regenrate the plots. 
+
+# %%
+tweakedmodel = myModel({'gender': -0.6, 'ethnic': -0.8})
+
+months = 360
+world1['incomefinal_tweaked'] = world1.apply(
+    lambda x: tweakedmodel.predictFinalIncome(months, x), axis=1)
+
+print(world1)
+
+sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal_tweaked', hue = 'gender', kind = 'boxen', palette='Set2')
+plt.ticklabel_format(style='plain', axis='y')
+plt.title('Tweaked Model on World1')
+
+sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal_tweaked', hue = 'gender', kind = 'violin', palette='Spectral')
+plt.ticklabel_format(style='plain', axis='y')
+
+# By changing the growth rate percentages on gender and enthnicity, we can observe that world1 undergoes a massive change. 
+#
+# By creating a tweaked model, with gender set to -0.6 and ethnic set to -0.8 we can observe from the plot that differences between genders in all three ethnicities have reduced to a very minimal level, with both F/M having nearly the same average income over the next 30 years or 360 months. 
+#
+# The overall differences between the ethnicities has also reduced greatly. This can be observed from both, boxen and violin plots. 
+# 
+
+# %%
+# Checking the tweaked model 720 months or 60 years down the line on world1. 
+
+world1['incomefinal_tweaked'] = world1.apply(
+    lambda x: tweakedmodel.predictFinalIncome(720, x), axis=1)
+
+print(world1)
+
+sns.catplot(data = world1, x = 'ethnic' , y = 'incomefinal_tweaked', hue = 'gender', kind = 'boxen', palette='gnuplot')
+plt.ticklabel_format(style='plain', axis='y')
+plt.title('Forecast - Tweaked Model on World1 720 months')
+
+# We can observe that gender differences across ethnicities have come up again over a time difference of 60 years even when using the tweaked model. 
+# 
+# Differences between the three ethnicities continue to grow over 60 years. Maybe these observed differences could be due to other factors also affecting the bias like industry, age, education, marital, and income in world1. 
+#
+# Hence, within the next 60 years, there is almost no chance for world#1 to become like utop world2. 
+
+
+# %%
