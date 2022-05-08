@@ -8,11 +8,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+import seaborn as sns
 from matplotlib import axis
 import numpy as np
 import pandas as pd
 import dm6103 as dm
-
+ 
 world1 = dm.api_dsLand('World1', 'id')
 world2 = dm.api_dsLand('World2', 'id')
 
@@ -67,7 +68,10 @@ model1_cm = confusion_matrix(y_test, model1_y_pred)
 print(model1_cm)
 cr_1 = classification_report(y_test, model1_y_pred)
 print(cr_1)
-
+# Plotting the confusion matrix:
+sns.heatmap(model1_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # Support Vector Classifier:
 model2 = SVC()
 model2.fit(X_train, y_train)
@@ -76,7 +80,9 @@ model2_cm = confusion_matrix(y_test, model2_y_pred)
 print(model2_cm)
 cr_2 = classification_report(y_test, model2_y_pred)
 print(cr_2)
-
+sns.heatmap(model2_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # Classification tree:
 model3 = DecisionTreeClassifier()
 model3.fit(X_train, y_train)
@@ -85,14 +91,16 @@ model3_cm = confusion_matrix(y_test, model3_y_pred)
 print(model3_cm)
 cr_3 = classification_report(y_test, model3_y_pred)
 print(cr_3)
-
+sns.heatmap(model3_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # All three models perform similarly with f1 score and accuracy in the range of 40% to 45%.
 #
 # This signifies that the ebove models are only 40-45% accurate in predicting the ethnicity of a person based on information like income, age, gender, education years and industry.
 #
 #
 # Feature Importance:
-# Let us use feature importance to check what variables had more variation towards the target variable:
+# Let us use feature importance on Model 1 or RandomForrestClassifier Model to check what variables have more variation towards the target variable:
 importance = model1.feature_importances_
 importance = np.sort(importance)
 # summarize feature importance
@@ -100,8 +108,18 @@ importance = np.sort(importance)
 imp_df = pd.DataFrame({'Feature': X.columns, 'Score': importance})
 print(imp_df)
 # plot feature importance
-plt.bar([x for x in range(len(importance))], importance)
+plt.bar(imp_df['Feature'], imp_df['Score'])
+plt.title('Feature Importance - World 1')
 plt.show()
+#
+#
+#     Feature     Score
+# 0      age00  0.014772
+# 1  education  0.043253
+# 2    marital  0.093521
+# 3     gender  0.112338
+# 4   industry  0.354906
+# 5   income00  0.381210
 #
 # From the values and the plot, we can observe that income and industry are the better predictors for ethnicity.
 #
@@ -120,10 +138,12 @@ model1_w2 = RandomForestClassifier()
 model1_w2.fit(X_train, y_train)
 model1_w2_y_pred = model1_w2.predict(X_test)
 model1_w2_cm = confusion_matrix(y_test, model1_w2_y_pred)
-print(model1_cm)
+print(model1_w2_cm)
 cr_1_w2 = classification_report(y_test, model1_w2_y_pred)
 print(cr_1_w2)
-
+sns.heatmap(model1_w2_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # Support Vector Classifier:
 model2_w2 = SVC()
 model2_w2.fit(X_train, y_train)
@@ -132,7 +152,9 @@ model2_w2_cm = confusion_matrix(y_test, model2_w2_y_pred)
 print(model2_w2_cm)
 cr_2_w2 = classification_report(y_test, model2_w2_y_pred)
 print(cr_2_w2)
-
+sns.heatmap(model2_w2_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # Classification tree:
 model3_w2 = DecisionTreeClassifier()
 model3_w2.fit(X_train, y_train)
@@ -141,14 +163,16 @@ model3_w2_cm = confusion_matrix(y_test, model3_w2_y_pred)
 print(model3_w2_cm)
 cr_3_w2 = classification_report(y_test, model3_w2_y_pred)
 print(cr_3_w2)
-
+sns.heatmap(model2_w2_cm, annot = True, fmt = 'd')
+plt.show()
+#
 # All three models perform similarly with f1 score and accuracy between 30 and 35%.
 #
-# This signifies that the ebove models are 30-35% accurate in predicting the ethnicity of a person based on information like income, age, gender, education years and industry.
+# This signifies that the above models are 30-35% accurate in predicting the ethnicity of a person based on information like income, age, gender, education years and industry.
 #
 #
 # Feature Importance:
-# Let us use feature importance to check what variables had more variation towards the target variable:
+# Let us use feature importance on Model 1 or RandomForrestClassifier Model to check what variables have more variation towards the target variable:
 importance = model1_w2.feature_importances_
 importance = np.sort(importance)
 # summarize feature importance
@@ -156,8 +180,17 @@ importance = np.sort(importance)
 imp_df_w2 = pd.DataFrame({'Feature': X.columns, 'Score': importance})
 print(imp_df_w2)
 # plot feature importance
-plt.bar([x for x in range(len(importance))], importance)
+plt.bar(imp_df_w2['Feature'], imp_df_w2['Score'])
+plt.title('Feature Importance - World 2')
 plt.show()
+#
+# 0	age00	0.019539
+# 1	education	0.035551
+# 2	marital	0.051786
+# 3	gender	0.109275
+# 4	industry	0.390376
+# 5	income00	0.393473
+#
 #
 # From the values and the plot, we can observe that income and industry are the better predictors for ethnicity even for world 2.
 #
