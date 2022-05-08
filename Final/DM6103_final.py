@@ -634,7 +634,6 @@ plt.title('Forecast - Tweaked Model on World1 720 months')
 # 
 # Differences between the three ethnicities continue to grow over 60 years. Maybe these observed differences could be due to other factors also affecting the bias like industry, age, education, marital, and income in world1. 
 #
-# Hence, within the next 60 years, there is almost no chance for world#1 to become like utop world2. 
-
+# Hence, within the next 60 years or 720 months, there is almost no chance for world#1 to become like utop world2. 
 
 # %%
