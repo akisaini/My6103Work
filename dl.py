@@ -416,5 +416,60 @@ y_test[0]
 data_augmentation = keras.Sequential([
     layers.experimental.preprocessing.RandomContrast(0.9)
 ])
+
 # %%
+# Tesnsorflow input pipeline:
+import tensorflow as tf
+import numpy as np
+# %%
+daily_sales_numbers = [21, 22, -108, 31, -1, 32, 34,31]
+# converts each number into a tensor. 
+tf_dataset = tf.data.Dataset.from_tensor_slices(daily_sales_numbers)
+tf_dataset
+# %%
+# check elements as numpy elements.
+for i in tf_dataset:
+    print(i.numpy())
+# %%
+# filter numbers that are positive. 
+tf_dataset = tf_dataset.filter(lambda x: x > 0)
+# %%
+# Random task below: can be anything. 
+# convert the numbers into different currency: (multiply by 72)
+# %%
+tf_dataset = tf_dataset.map(lambda x: x*72)
+
+#%%
+# Small Review Exercise: 
+tf_data = tf.data.Dataset.list_files('tf input pipeline/*/*', shuffle = False)
+
+for i in tf_data:
+    print(i.numpy())
     
+#%%   
+# Splitting into training and test sets - using Tensorflow take/skip
+
+train_size = int(len(tf_data)*0.8)
+train_ds = tf_data.take(train_size)
+test_size = tf_data.skip(train_size) 
+
+# %%
+def get_label(filepath):
+    import os
+    parts = tf.strings.split(filepath, os.path.sep)
+    return parts[-2]
+
+# %%
+def process_file(filepath):
+    label = get_label(filepath)
+    txt = tf.io.read_file(filepath) # Load the raw file from the path
+    return label, txt
+    
+# %%
+train_ds = train_ds.map(process_file)
+# %%
+# As it's a tuple. Has two values. 
+train_ds2 = train_ds.filter(lambda label, txt: txt!="")
+# Usual input pipeline: open -> read -> map -> train
+# %%
+
