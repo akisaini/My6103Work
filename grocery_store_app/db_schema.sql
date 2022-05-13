@@ -68,3 +68,20 @@ INSERT INTO orders VALUES
 
 INSERT INTO order_details VALUES
 (1, 1, 10, 2, 20);
+
+INSERT INTO products VALUES
+(2, 'salt', 2, 10),
+(3, 'clock', 1, 30),
+(4, 'water-bottle', 1, 15),
+(5, 'Pillow', 1 , 10),
+(6, 'Onions', 2, 2),
+(7, 'Bananas', 2, 3),
+(8, 'Apples', 2, 5),
+(9, 'Cilantro', 2, 3),
+(10, 'Pineapple', 1, 4),
+(11, 'Beer', 1, 12),
+(12, 'Wine', 1, 12),
+(13, 'Chips', 1, 3),
+(14, 'Orange', 2, 5),
+(15, 'Light Bulb', 1, 3);
+
