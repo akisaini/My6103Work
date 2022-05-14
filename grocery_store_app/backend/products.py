@@ -1,7 +1,7 @@
 #%%
 from sql_connection import get_sql_connection
 # %%
-# Insert queries into db
+# Get products from db
 
 def get_all_products(connection):
 
@@ -61,6 +61,8 @@ def delete_product(connection, product_id):
     query = 'DELETE FROM products WHERE product_id = ' + str(product_id)
     cursor.execute(query) 
     connection.commit()
+
+
 
 if __name__ == "__main__":
     connection = get_sql_connection()
