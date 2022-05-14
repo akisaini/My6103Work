@@ -472,4 +472,53 @@ train_ds = train_ds.map(process_file)
 train_ds2 = train_ds.filter(lambda label, txt: txt!="")
 # Usual input pipeline: open -> read -> map -> train
 # %%
+# BERT - Autocomplete and text classification. 
+import tensorflow_hub as hub
+import tensorflow_text as text
+# %%
+# preprocessing model BERT12
+preprocess_url = "https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3"
+# BERT model for BERT12
+encoder_url = "https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4"
 
+bert_preprocess_model = hub.KerasLayer(preprocess_url)
+text_test = ['Hello how are you', 'No this will only work sometimes']
+text_processed = bert_preprocess_model(text_test)
+# %%
+text_processed.keys()
+# %%
+bert_model = hub.KerasLayer(encoder_url)
+# %%
+bert_results = bert_model(text_processed)
+# %%
+bert_results.keys()
+# %%
+bert_results['pooled_output']
+# The two sentences have been converted into a 768 x 1  matrix each. 768 represents the different features that the words can be identified by. BERT12 uses fixed 768. BERT 24 will use more. 
+
+# So, 'Hello how are you' can be identified by: [-0.9134118 , -0.32548246, -0.56972647, ..., -0.4263578 ,
+#        -0.639011  ,  0.92830807]. where each value is a different feature (think feature importance) and the value represents it's relation with the feature. 
+
+# These matrices can be further used in the text classification modeling. 
+
+# %%
+
+# SPAM Classification Model
+import pandas as pd
+import numpy as np
+# %%
+spam_df = pd.read_csv('spam.csv')
+# %%
+spam_df['Category'].value_counts()
+# %%
+# Imbalanced data. We can balance it using SMOTE or other oversampling techniques. For now, lets just downsample the majority. 
+
+spam_df_ham = spam_df[spam_df['Category']=='ham'].sample(n = 747)
+# %%
+spam_df_spam = spam_df[spam_df['Category']=='spam']
+# %%
+df_bal = pd.concat([spam_df_ham, spam_df_spam])
+# %%
+df_bal['Category'].value_counts()
+# Now, it's balanced. 
+# %%
