@@ -20,7 +20,7 @@ def get_all_products(connection):
             'name':name,
             'uom_id':uom_id,
             'unit_name':unit_name,
-            'price_per_unit':price_per_unit
+            'price_per_unit': float(price_per_unit)
             }
             )
 
