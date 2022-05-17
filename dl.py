@@ -506,19 +506,124 @@ bert_results['pooled_output']
 # SPAM Classification Model
 import pandas as pd
 import numpy as np
-# %%
+
 spam_df = pd.read_csv('spam.csv')
-# %%
 spam_df['Category'].value_counts()
-# %%
+
 # Imbalanced data. We can balance it using SMOTE or other oversampling techniques. For now, lets just downsample the majority. 
 
 spam_df_ham = spam_df[spam_df['Category']=='ham'].sample(n = 747)
-# %%
 spam_df_spam = spam_df[spam_df['Category']=='spam']
-# %%
 df_bal = pd.concat([spam_df_ham, spam_df_spam])
-# %%
+
 df_bal['Category'].value_counts()
 # Now, it's balanced. 
+# %%
+X = df_bal.drop(['Category'], axis = 1)
+y = df_bal['Category']
+y = y.replace(to_replace = ['ham', 'spam'], value = [0, 1])
+
+#%%
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.8, stratify=y)
+# %%
+import tensorflow as tf
+import tensorflow_hub as hub
+
+# %%
+bert_preprocess = hub.KerasLayer("https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3")
+bert_encoder = hub.KerasLayer("https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4")
+# %%
+# Example tryout: 
+
+def get_sentence_embedding(sentence):
+    preprocessed_text = bert_preprocess(sentence)
+    # Will return the embedded vector with 768 feature values
+    return bert_encoder(preprocessed_text)['pooled_output']
+# %%
+get_sentence_embedding(['Hi Akshat, how are you!'])
+# %%
+from sklearn.metrics.pairwise import cosine_similarity
+
+
+e = get_sentence_embedding(['banana', 'pineapple', 'jackfruit', 'laptop', 'dog'])
+
+# %%
+cosine_similarity([e[3]], [e[4]])
+# %%
+# Bert Layers
+text_input = tf.keras.layers.Input(shape = (), dtype = tf.string, name = 'text')
+preprocessed_text = bert_preprocess(text_input)
+output = bert_encoder(preprocessed_text)
+
+# Neural Network Layers
+# %%
+# functional neural network 
+l1 = tf.keras.layers.Dropout(0.1, name = 'dropout')(output['pooled_output'])
+# for name parameter we can give anything. output from previous layer is passed down to the next layer. 
+# Below layer has only one neuron that checks if category is spam or not(sigmoid). 
+l2 = tf.keras.layers.Dense(1, activation = 'sigmoid', name = 'output')(l1)
+# experimenting with another layer addidtion. 
+l3 = tf.keras.layers.Dense(1, activation = 'sigmoid', name = 'output2')(l2)
+
+# %%
+# Construct final model
+# Input is the text_input and output is the last neural network layer - l3
+model = tf.keras.Model(inputs = [text_input], outputs = [l3])
+# %%
+model.summary()
+# %%
+
+# Providing different types of metrics to be shown
+Metrics = [tf.keras.metrics.BinaryAccuracy(name = 'Accuracy'),
+tf.keras.metrics.Precision(name = 'precision'),
+tf.keras.metrics.Recall(name = 'recall')]
+
+# model compilation
+# binary_crossentropy for logistics regression problems (0/1)
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = Metrics)
+# %%
+# building model
+model.fit(X_train, y_train, epochs = 10)
+# %%
+model.evaluate(X_test, y_test)
+# %%
+y_pred = model.predict(X_test)
+y_pred = y_pred.flatten()
+# %%
+# y_pred are probability values 
+# converting all values above 0.5 into 1 and below 0.5 into 0. 
+y_pred = np.where(y_pred > 0, 1, 0)
+# %%
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, classification_report
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+#[[  0 150]
+# [  0 149]]
+
+sns.heatmap(cm, annot = True, fmt = 'd')
+# 0 were ham and they were predicted as ham
+# 150 were ham but they were predicted as spam
+# 0 were spam but they were predicted as ham
+# 149 were spam and they were predicted as spam
+
+
+cr = classification_report(y_test, y_pred)
+print(cr)
+# %%
+# Lets try our own examples
+
+test = [
+    'YOU HAVE WON 100000!!!! PLEASE CLICK HERE TO ACCEPT NOW!',#1
+    'Mike, message me back right now or click here!',#0
+    'Meet me in a radius of 0.5 miles from your home darling',#1
+    'Hey, i need those documents right away!',#0
+    'What movie is in the theaters? Click here for answers',#0
+]
+# %%
+test_pred = model.predict(test)
+# %%
+print(test_pred)
 # %%
