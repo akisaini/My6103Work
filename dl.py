@@ -644,3 +644,71 @@ plt.legend()
 
 plt.show()
 # %%
+# Word2Vec using Keras. - very important. converts words into numbers. and is needed as a preprocessing task for all problems where sentences are involved. 
+import numpy as np
+from tensorflow.keras.preprocessing.text import one_hot
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Embedding
+
+# %%
+reviews = ['nice food',
+        'amazing restaurant',
+        'too good',
+        'just loved it!',
+        'will go again',
+        'horrible food',
+        'never go there',
+        'poor service',
+        'poor quality',
+        'needs improvement']
+# %%
+sentiment  = np.array([1,1,1,1,1,0,0,0,0,0])
+# %%
+# vocab_size is the range for a random identification number that is assigned to a word by the one_hot method. 
+encoded_reviews = []
+vocab_size = 30
+for i in reviews:
+    encoded_reviews.append(one_hot(i, vocab_size))
+# %%
+# [[7, 20],
+# [22, 17],
+# [27, 19],
+# [25, 4, 22],
+# [28, 19, 12],
+# [27, 20],
+# [12, 19, 5],
+# [13, 4],
+# [13, 20],
+# [2, 14]]
+
+# now we will apply padding to the encoded_reviews array to make all the encoded_words the same size. 
+
+max_size = 3
+
+padded_reviews = pad_sequences(encoded_reviews, maxlen = max_size, padding = 'post')
+# post padding means that the padding will be applied towards the end of the encoded word. 
+# %%
+print(padded_reviews)
+# %%
+embedded_vec_size = 4
+model = Sequential()
+model.add(Embedding(vocab_size, embedded_vec_size, input_length = max_size, name = 'embedding'))
+model.add(Flatten())
+model.add(Dense(1, activation = 'sigmoid'))
+# %%
+X = padded_reviews
+y = sentiment
+# %%
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+print(model.summary())
+# %%
+model.fit(X,y,epochs = 100)
+# %%
+# model.get_weights gives all the weights 
+weights = model.get_layer('embedding').get_weights()[0]
+# %%
+len(weights)
+# %%
+weights[7]
+# %%
