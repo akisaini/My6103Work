@@ -530,7 +530,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.8, stra
 # %%
 import tensorflow as tf
 import tensorflow_hub as hub
-
+import tensorflow_text as text
 # %%
 bert_preprocess = hub.KerasLayer("https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3")
 bert_encoder = hub.KerasLayer("https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4")
@@ -550,7 +550,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 e = get_sentence_embedding(['banana', 'pineapple', 'jackfruit', 'laptop', 'dog'])
 
 # %%
-cosine_similarity([e[3]], [e[4]])
+cosine_similarity([e[0]],[e[4]])
 # %%
 # Bert Layers
 text_input = tf.keras.layers.Input(shape = (), dtype = tf.string, name = 'text')
@@ -560,17 +560,17 @@ output = bert_encoder(preprocessed_text)
 # Neural Network Layers
 # %%
 # functional neural network 
-l1 = tf.keras.layers.Dropout(0.1, name = 'dropout')(output['pooled_output'])
+l = tf.keras.layers.Dropout(0.1, name = 'dropout')(output['pooled_output'])
 # for name parameter we can give anything. output from previous layer is passed down to the next layer. 
 # Below layer has only one neuron that checks if category is spam or not(sigmoid). 
-l2 = tf.keras.layers.Dense(1, activation = 'sigmoid', name = 'output')(l1)
+l = tf.keras.layers.Dense(1, activation = 'sigmoid', name = 'output')(l)
 # experimenting with another layer addidtion. 
-l3 = tf.keras.layers.Dense(1, activation = 'sigmoid', name = 'output2')(l2)
+
 
 # %%
 # Construct final model
 # Input is the text_input and output is the last neural network layer - l3
-model = tf.keras.Model(inputs = [text_input], outputs = [l3])
+model = tf.keras.Model(inputs = [text_input], outputs = [l])
 # %%
 model.summary()
 # %%
@@ -585,30 +585,32 @@ tf.keras.metrics.Recall(name = 'recall')]
 model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = Metrics)
 # %%
 # building model
-model.fit(X_train, y_train, epochs = 10)
+mod = model.fit(X_train, y_train, epochs = 1)
 # %%
 model.evaluate(X_test, y_test)
-# %%
+#%%
+
+#%%
 y_pred = model.predict(X_test)
 y_pred = y_pred.flatten()
 # %%
 # y_pred are probability values 
-# converting all values above 0.5 into 1 and below 0.5 into 0. 
-y_pred = np.where(y_pred > 0, 1, 0)
+# converting all values above 0.6 into 1 and below 0.6 into 0. 
+y_pred = np.where(y_pred > 0.5, 1, 0)
 # %%
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, classification_report
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
-#[[  0 150]
-# [  0 149]]
+#[[137  12]
+# [ 14 136]]
 
 sns.heatmap(cm, annot = True, fmt = 'd')
-# 0 were ham and they were predicted as ham
-# 150 were ham but they were predicted as spam
-# 0 were spam but they were predicted as ham
-# 149 were spam and they were predicted as spam
-
+# 127 were ham and they were predicted as ham
+# 22 were ham but they were predicted as spam
+# 9 were spam but they were predicted as ham
+# 144 were spam and they were predicted as spam
+# 91% Accuracy
 
 cr = classification_report(y_test, y_pred)
 print(cr)
@@ -616,14 +618,29 @@ print(cr)
 # Lets try our own examples
 
 test = [
-    'YOU HAVE WON 100000!!!! PLEASE CLICK HERE TO ACCEPT NOW!',#1
-    'Mike, message me back right now or click here!',#0
-    'Meet me in a radius of 0.5 miles from your home darling',#1
-    'Hey, i need those documents right away!',#0
-    'What movie is in the theaters? Click here for answers',#0
+    'Akshat, whats you favorite sport to watch on tv?',
+    'click on this link to get a free pizza!',
+    'phew, who knew.....'
 ]
 # %%
 test_pred = model.predict(test)
+#%%
+test_pred = test_pred.flatten()
 # %%
 print(test_pred)
+# %%
+from tensorflow import keras
+import matplotlib.pyplot as plt
+#%%
+# plot - epochs vs loss. 
+# mod is the built model. and the history parameter stores the previous values for epochs and loss. 
+loss_values = mod.history['loss']
+epochs = range(1, len(loss_values)+1)
+
+plt.plot(epochs, loss_values, label='Training Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.show()
 # %%
