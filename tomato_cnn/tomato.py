@@ -123,3 +123,5 @@ for image_batch, label_batch in test_ds.take(1):
 # %%
 model.save('./tomato_cnn/')
 # %%
+# %pip install -r C:/Users/saini/Documents/GWU/6103-DM/Github Repository/My6103Work/tomato_cnn/requirements.txt
+
