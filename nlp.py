@@ -98,3 +98,11 @@ for pos, count in pos_count.items():
     print(doc3.vocab[pos].text, '--', count, '--', spacy.explain(doc3.vocab[pos].text))
 # %%
 # spacy.explain gives more information about the POS - part of speech. 
+import spacy
+nlp = spacy.load("en_core_web_sm")
+#%%
+doc = nlp('Mike Bloomberg founded Bloomberg Inc. in 1982.')
+# %%
+for ent in doc.ents:
+    print(ent.text, '|', ent.label_, '|', spacy.explain(ent.label_))
+# %%
