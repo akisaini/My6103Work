@@ -14,7 +14,7 @@ app = FastAPI()
 class User(BaseModel):
     username: str
     email: str
-#    created_at: datetime
+#    created_at: datetime 
 #    updated_at: datetime
 
 @app.get('/')
@@ -40,7 +40,7 @@ async def create_item(user: User):
 
 '''
 title
-type
+type ( img or text)
 created_by
 created_at
 updated_at
@@ -50,8 +50,8 @@ is_add_choices_active
 class Poll(BaseModel):
     title: str
     type: str
-    is_voting_active: bool
-    is_add_choices_active: bool
+    is_voting_active: bool # can allow voting to start or not. 
+    is_add_choices_active: bool # Toggle the option to allow people to add options to the poll (they can toggle off and on when they want)
     created_by: int
 #    created_at: datetime
 #    updated_at: datetime
