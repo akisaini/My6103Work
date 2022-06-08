@@ -1,25 +1,65 @@
 #%%
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 import uvicorn
 import nest_asyncio
 nest_asyncio.apply()
 from pydantic import BaseModel
 from datetime import datetime
-import sqlalchemy
 import databases 
-import alembic
 from sqlalchemy import engine_from_config, pool
+from sqlalchemy.orm import Session
 from alembic import context 
 from logging.config import fileConfig
+from typing import List
 
+from db.models.models import User, Poll 
+from db.db import SessionLocal, engine, Base
+#%%
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
+def get_user(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()
+
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(User).offset(skip).limit(limit).all()
+
 
 class User(BaseModel):
     username: str
     email: str
-#    created_at: datetime 
-#    updated_at: datetime
+    created_at: datetime 
+    updated_at: datetime
+
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+
+def create_user(db: Session, user: UserCreate):
+    db_user = User(email=user.email, username = user.username)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 
 @app.get('/')
 async def root():
@@ -27,16 +67,20 @@ async def root():
 
 @app.get('/polls')
 async def root():
-    return {'polls': 'Hello World'}
-
-@app.get('/users')
-async def root():
-    return {'users': 'Hello World'}
+    return {'polls': 'Hello World'} 
 
 
-@app.post('/users/')
-async def create_item(user: User):
-    return user
+@app.get("/users/", response_model=list[User])
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = get_users(db, skip=skip, limit=limit)
+    return users
+
+@app.post("/users/", response_model=User)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return create_user(db=db, user=user)
     
 #%%
 
@@ -68,6 +112,5 @@ async def create_poll(poll: Poll):
 #%%
 if __name__ == '__main__':
     uvicorn.run(app, host = '127.0.0.1', port = 5000, log_level = 'info')
-# %%
-import alembic
+    
 # %%

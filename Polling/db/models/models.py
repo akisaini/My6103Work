@@ -1,10 +1,9 @@
-from curses import def_shell_mode
 from matplotlib.pyplot import title
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from ..database import Base
+from db.db import Base
 
 
 class User(Base):   
@@ -15,7 +14,7 @@ class User(Base):
     username = Column(String, unique = True, nullable  = False)
     created_at = Column(DateTime, default = datetime.now())
     updated_at = Column(DateTime, default = datetime.now())
-    polls = relationship("poll", back_populates="owner")
+    polls = relationship("Poll", back_populates="owner")
     
     
 class Poll(Base):
@@ -23,11 +22,11 @@ class Poll(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable  = False)
-    poll_type = Column(String, nullable  = False)
+    type = Column(String, nullable  = False)
     is_add_choices_active = Column(Boolean, default = False)
     is_voting_ative = Column(Boolean, default = False)
     owner_id = Column(Integer, ForeignKey('users.id'), nullable  = False)
     created_at = Column(DateTime, default = datetime.now())
     updated_at = Column(DateTime, default = datetime.now())
     
-    owner = relationship("user", back_populates="polls")
+    owner = relationship("User", back_populates="polls")
