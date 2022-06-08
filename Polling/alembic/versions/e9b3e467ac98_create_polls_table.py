@@ -9,7 +9,7 @@ import enum
 from alembic import op
 from prometheus_client import Enum
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql as pg
 
 class PollType(enum.Enum):
     text = 1
@@ -28,7 +28,7 @@ def upgrade() -> None:
     'polls',
     sa.Column('id', sa.Integer, primary_key=True),
     sa.Column('title', sa.String(255), nullable=False),
-    sa.Column('type', sa.Enum(PollType), nullable = False),
+    sa.Column('type', pg.ENUM(PollType, create_type = False), nullable = False),
     sa.Column('is_voting_active', sa.Boolean, nullable=False),
     sa.Column('is_add_choices_active', sa.Boolean, nullable = False),
     sa.Column('created_by', sa.Integer, nullable=False),

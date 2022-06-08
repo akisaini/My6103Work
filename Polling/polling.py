@@ -8,6 +8,10 @@ from datetime import datetime
 import sqlalchemy
 import databases 
 import alembic
+from sqlalchemy import engine_from_config, pool
+from alembic import context 
+from logging.config import fileConfig
+
 
 app = FastAPI()
 
