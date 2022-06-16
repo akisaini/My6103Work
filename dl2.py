@@ -1,5 +1,6 @@
 #%%
 import numpy as np
+from sympy import Min
 import tensorflow as tf
 from tensorflow import keras 
 import pandas as pd
@@ -115,4 +116,64 @@ my_model = basicNN()
 # %%
 my_model.fit(X_train_scaled, y_train, epochs = 100, loss_threshold = 0.20)
 
+# %%
+# Customer churn prediction using ANN. 
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+#%%
+df = pd.read_csv('TelcoCustomerChurn.csv')
+# %%
+df
+# %%
+df.drop('customerID', axis = 1, inplace = True)
+# %%
+df.replace({'No': 0, 'Yes':1, 'No internet service':0}, inplace = True)
+df.replace({'Male': 1, 'Female':0 }, inplace = True)
+df.replace({'No phone service': 0 }, inplace = True)
+df = pd.get_dummies(df, columns = ['InternetService', 'Contract', 'PaymentMethod' ])
+df = df[df['TotalCharges']!=' ']
+df['TotalCharges'] = pd.to_numeric(df['TotalCharges'])
+# %%
+# Now the data is ready. Lets scale it. 
+cols_to_scale = ['tenure', 'MonthlyCharges', 'TotalCharges']
+scale = MinMaxScaler()
+for i in cols_to_scale:
+    df[cols_to_scale] = scale.fit_transform(df[cols_to_scale])
+# %%
+from sklearn.model_selection import train_test_split
+X = df.drop('Churn', axis = 1)
+y = df['Churn']
+# %%
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size= 0.8, test_size= 0.2, random_state= 10)
+# %%
+# Now we are ready for building neural network (ANN):
+from tensorflow import keras
+import tensorflow as tf
+# %%
+model = keras.Sequential([
+                        keras.layers.Dense(26, input_shape= (26,), activation = 'relu'), # input layer
+                        keras.layers.Dense(15, activation = 'relu'), # hidden layer (can have any number of neurons)
+                        keras.layers.Dense(10, activation = 'relu'), # another hidden layer
+                        keras.layers.Dense(1, activation = 'sigmoid') # output layer -  sigmoid because target is 1/0
+                        ])
+
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+
+model.fit(X_train, y_train, epochs = 500)
+# %%
+y_pred = model.predict(X_test)
+# converting all numbers above 0.5 to 1 and below 0.5 to 0.
+y_p = []
+for i in y_pred:
+    if i[0] > 0.5:
+        y_p.append(1)
+    else:
+        y_p.append(0)
+# %%
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_p)
+# %%
+cm
 # %%
