@@ -177,3 +177,69 @@ cm = confusion_matrix(y_test, y_p)
 # %%
 cm
 # %%
+# CNN with the CIFAR10 dataset (Image Classification Model)
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras import datasets, layers, models
+#%%
+(X_train, y_train), (X_test, y_test) = datasets.cifar10.load_data()
+
+# - X_train.shape -> (50000, 32, 32, 3) # 
+# - y_train.shape -> (50000, 1) 
+# %%
+# to casually view the image.
+plt.imshow(X_train[0])
+# %%
+# Scaling the data by dividing by 255 (image is 255 pixels)
+X_train = X_train/255
+X_test = X_test/255
+# %%
+# converting y_train and y_test to 1D array
+y_train = y_train.reshape(-1,) # (50000,)
+y_test = y_test.reshape(-1,) 
+#%%
+
+classes = ['airplane', 'automobile', 'brid', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+def plot_image(X_train, y_train, index):
+    plt.imshow(X_train[index])
+    plt.xlabel(classes[y_train[index]])
+# %%
+# Now building the convolutional neural network. 
+
+cnn_model = models.Sequential([
+    # Feature Extraction
+                        layers.Conv2D(64, activation = 'relu', kernel_size = (3,3), input_shape = (32,32,3)),
+                        layers.MaxPooling2D((2,2)),
+                        
+                        layers.Conv2D(32, activation = 'relu', kernel_size = (3,3)),
+                        layers.MaxPooling2D((2,2)),
+    # Dense Layer       
+                        layers.Flatten(),
+                        layers.Dense(30, activation  = 'softmax'),
+                        ])
+
+cnn_model.compile(optimizer = 'adam',
+              loss = 'sparse_categorical_crossentropy',
+              metrics = ['accuracy'])
+
+my_model = cnn_model.fit(X_train, y_train, epochs = 10)
+# %%
+my_model.history.keys()
+# %%
+accuracy = my_model.history.get('accuracy')
+loss = my_model.history.get('loss')
+plt.plot(accuracy)
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend('Train Data', loc = 'upper left')
+plt.show()
+# %%
+plt.plot(loss)
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend('Train Data', loc = 'upper right')
+plt.show()
+# %%
