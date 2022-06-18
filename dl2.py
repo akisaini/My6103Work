@@ -243,3 +243,26 @@ plt.ylabel('Loss')
 plt.legend('Train Data', loc = 'upper right')
 plt.show()
 # %%
+# BERT spam classification
+import pandas as pd
+import tensorflow_hub as hub
+import tensorflow_text as text
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+#%%
+df = pd.read_csv('spam.csv')
+#%%
+df_ham = df[df['Category']=='ham'].sample(747)
+df_spam = df[df['Category']=='spam']
+df_main = pd.concat([df_spam, df_ham], ignore_index = True)
+df_main['Category'] = df_main['Category'].apply(lambda x : 1 if x == 'spam' else 0)
+# %%
+X = df_main.drop('Category', axis = 1)
+y = df_main['Category']
+# %%
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.75, test_size = 0.25, random_state= 10)
+# %%
+bert_preprocessor = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3')
+bert_encoder = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4')
+#%%
+# %%
