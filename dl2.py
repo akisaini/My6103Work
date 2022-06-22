@@ -266,3 +266,66 @@ bert_preprocessor = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased
 bert_encoder = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/4')
 #%%
 # %%
+# Word2Vec using Gensim Library
+import gensim
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras import layers, Sequential
+# %%
+df = pd.read_json('Cell_Phones_and_Accessories_5.json', lines = True)
+# %%
+# Converting every review into seperate tokens, lowercasing words and general preprocessing. 
+
+review_text = df['reviewText'].apply(lambda x: gensim.utils.simple_preprocess(x))
+# %%
+# initializing Gensim model. 
+model = gensim.models.Word2Vec(
+        window = 10,
+        min_count = 2,
+        workers = 4
+)
+
+# %%
+# Building vocabulary using the build_vocab function. 
+model.build_vocab(review_text, progress_per = 1000)
+# %%
+model.epochs
+# %%
+model.train(review_text, total_examples=model.corpus_count, epochs = model.epochs)
+# %%
+model.save('amazon_cell_phone_review.model')
+# %%
+# similar words to great. 
+model.wv.most_similar('great')
+# %%
+# Vector representation of a word.  
+model.wv.get_vector('bad')
+# %%
+df_2  = pd.read_json('Sports_and_Outdoors_5.json', lines = True)
+# %%
+df_2.head()
+# %%
+# Preprocessing using Gensim
+review_text2 = df_2['reviewText'].apply(lambda x : gensim.utils.simple_preprocess(x))
+# %%
+review_text2
+# %%
+model2 = gensim.models.Word2Vec(
+                window = 5,
+                min_count = 3,
+                workers = 4
+)
+# %%
+# Building vocabulary now
+model2.build_vocab(review_text2, progress_per = 2500)
+#%%
+model2.epochs
+# %%
+model2.train(review_text2, epochs = model2.epochs, total_examples= model2.corpus_count)
+# %%
+model2.wv.most_similar('awful')
+# %%
+model2.wv.similarity('good', 'great')
+model2.wv.similarity('slow', 'steady')
+# %%
