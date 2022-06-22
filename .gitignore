@@ -133,3 +133,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 Assignments/HW_classifier/mnist_train.csv
+Sports_and_Outdoors_5.json
+Cell_Phones_and_Accessories_5.json
