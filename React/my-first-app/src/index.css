@@ -1,5 +1,19 @@
-.highlight
+.highlight /* defined class name */
 {
 background-color:aquamarine
+
+}
+
+
+.green-highlight
+{
+color: rgb(0, 150, 0);
+font-size: 40px;
+}
+
+.red-highlight
+{
+color: rgb(147, 49, 49);
+font-size:25px;
 
 }

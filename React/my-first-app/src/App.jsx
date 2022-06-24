@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import NavBar from './NavBar'
-import MainContent from './MainContent' 
+import CustomersList from './CustomersList' 
+import ShoppingCart from './ShoppingCart'
 
 export default class App extends Component{
  render()
@@ -8,7 +9,7 @@ export default class App extends Component{
     return  (
         <React.Fragment>
             <NavBar></NavBar>
-            <MainContent></MainContent>
+            <ShoppingCart></ShoppingCart>
         </React.Fragment>
     )
   }

@@ -1,0 +1,25 @@
+import { Component } from "react";
+
+export default class Product extends Component{
+
+state = {
+    product: this.props.product,
+}
+
+    render(){
+        // The props is used to access the parent( in this case ShoppingCart) properties. 
+        return ( 
+            <div className='col-lg-6 '>
+                <div className='card m-2'>
+                    <div className ='card-body'>
+                     <div className='text-muted'>#{this.state.product.id}</div>    
+                     <h5 className='p-2 border-top'>{this.state.product.productName}</h5>
+                     <div>${this.state.product.price}</div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+} 
+
+// props vs state: The props is used to access the parent Component properties or values. State are private values of a Component, and one Component cannot access the state of another Component directly. Another difference is, props is read only, but state is r/w, and can be updated using setState method. 
