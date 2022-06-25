@@ -1,9 +1,8 @@
 import React, {Component} from "react";
 class NavBar extends Component{
  render(){
-    return(
-        <React.Fragment>
-            <nav class="navbar navbar-expand-lg bg-dark">
+    return(<React.Fragment>
+<nav class="navbar navbar-expand-lg bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/#">eCommerce</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +17,7 @@ class NavBar extends Component{
     </div>
   </div>
 </nav>
-        </React.Fragment>
+    </React.Fragment>
     )
  }
 }

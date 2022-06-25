@@ -62,7 +62,7 @@ return (this.state.customers.map((cust, index) => {
                 <div>
                     <button className='btn btn-sm btn-secondary' onClick ={ () => {
                         this.onChangePictureClick(cust, index)}}>Change Picture</button>
-                </div>
+                </div>6
             </td>
             <td>{cust.name}</td>
             {/*Below translates to: if cust.phone equals null then render 'no phone', otherwise (:) show cust.phone value.
