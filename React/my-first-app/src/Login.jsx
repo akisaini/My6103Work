@@ -8,10 +8,9 @@ super(props);
 this.state = {
     email:'',
     password:'',
-    message:'', 
+    message:'',
 }
 }
-
 
 render() {
 
@@ -43,8 +42,17 @@ render() {
 
 }
 
-onLoginClick = () => {
-if (this.state.email === 'admin@test.com' && this.state.password === 'admin123'){
+
+// async and await (ComponentDidMount) always takes place after render. 
+
+onLoginClick = async () => {
+
+var response = await fetch(`http://localhost:5000/users?email=${this.state.email}&password=${this.state.password}`, {method:'GET'})
+
+var body = await response.json()
+console.log(body)
+
+if (body.length>0){ // there is a return instead of an []
     //success
     this.setState({message:<span className='text-success'>Successfully Logged-in</span>})
 }

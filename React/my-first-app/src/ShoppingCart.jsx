@@ -2,15 +2,12 @@ import {Component} from "react";
 import Product from './Product'
 
 export default class ShoppingCart extends Component {
-state = {
-    products:[
-        {id:1, productName:'iPhone', price: 1000, quantity: 0 },
-        {id:2, productName:'Camera', price: 3000, quantity: 0 },
-        {id:3, productName:'Samsung QLED TV', price: 5000, quantity: 0 },
-        {id:4, productName:'iPad Pro', price: 2000, quantity: 0 },
-        {id:5, productName:'XBox', price: 750, quantity: 0 },
-        {id:6, productName:'Dell Monitor', price: 900, quantity: 0 },
-    ]
+
+    constructor(props){
+    super(props)
+    this.state = {
+        products : [],
+    }
 }
 
 render (){
@@ -35,6 +32,17 @@ return (
 )
 }
  
+// Executes after constructor and render method of current Component. 
+
+componentDidMount = async() => {
+// fetch data from data source
+var response = await fetch("http://localhost:5000/products", {methods: 'GET'})
+
+var prods = await response.json()
+this.setState({products: prods})
+}
+
+
 handleIncrement = (product, maxValue) => {
 let allProducts = [...this.state.products]
 let index = allProducts.indexOf(product)
