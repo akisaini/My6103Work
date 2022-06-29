@@ -1,0 +1,44 @@
+#%%
+# motor is mongodb engine to connect db with server. 
+import motor.motor_asyncio
+
+
+
+client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017/')
+
+database = client.TodoList
+collection = database.todo
+
+# %%
+# get one todo given title
+async def fetch_one_todo(title):
+    doc = await collection.find_one({'title': title})
+    return doc
+
+# get all todos
+async def fetch_all_todos():
+    todos = []
+    cursor = collection.find({})
+    async for document in cursor: 
+        todos.append(document)
+    return todos
+
+# create todo
+# todo parameter is a json document here of class Todo.
+async def create_todo(todo):
+   doc = todo
+   result = await collection.insert_one(doc)
+   return doc
+
+# update todo
+# '$set' is used to define updates 
+async def update_todo_desc(title, desc):
+    await collection.update_one({'title':title}, {'$set': {'description': desc}})
+    return fetch_one_todo(title)
+    
+# delete todo
+async def remove_todo(title):
+    await collection.delete_one({'title': title})
+    return True
+    
+# %%
