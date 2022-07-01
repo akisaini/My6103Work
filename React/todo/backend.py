@@ -24,18 +24,18 @@ app.add_middleware(
 
 # basic 
 @app.get('/')
-async def get_all_todo():
+async def test_conn():
     return {'Hello': 'Just a basic test'}
 
 # fetches all todos 
-@app.get('/api/todo')
+@app.get('/api/todo', response_model=Todo)
 async def get_todo():
     response = await fetch_all_todos()
     return response
 
 # fetch todo by title
 @app.get('/api/todo{title}', response_model=Todo)
-async def get_todo_by_id(title):
+async def get_todo_by_title(title):
     response = await fetch_one_todo(title)
     if response:
         return response
@@ -44,7 +44,7 @@ async def get_todo_by_id(title):
 # Adds a new list given title and description.
 @app.post('/api/todo', response_model= Todo)
 async def add_todo(todo: Todo):
-    response = await create_todo(todo.dict())
+    response = await create_todo(todo.dict()) # passing a dict. 
     if response:
         return response
     raise HTTPException(400, 'Something went wrong/ Bad request')

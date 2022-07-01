@@ -1,10 +1,10 @@
 #%%
 # motor is mongodb engine to connect db with server. 
 import motor.motor_asyncio
+from models import Todo
 
 
-
-client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017/')
+client = motor.motor_asyncio.AsyncIOMotorClient('mongodb+srv://akshatsaini:Appymaladwest5656%25@cluster0.up6wz.mongodb.net/')
 
 database = client.TodoList
 collection = database.todo
@@ -18,13 +18,13 @@ async def fetch_one_todo(title):
 # get all todos
 async def fetch_all_todos():
     todos = []
-    cursor = collection.find({})
+    cursor = await collection.find({})
     async for document in cursor: 
-        todos.append(document)
+        todos.append(Todo(**document))
     return todos
 
 # create todo
-# todo parameter is a json document here of class Todo.
+# todo parameter is a dict document.
 async def create_todo(todo):
    doc = todo
    result = await collection.insert_one(doc)
