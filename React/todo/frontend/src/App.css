@@ -11,7 +11,7 @@
   align-items: center;
 }
 div{
-  text-align: center;;
+  text-align: center;
 }
 
 .app-wrapper {
@@ -23,13 +23,14 @@ div{
   border-radius: 10px;
   box-shadow: 3px 6px 40px #000;
   margin-bottom: 10px;
-
+  
   }
 
   .task-input{
     outline: none;
     width:260px;
     padding: 15px;
+    margin-top: 25px;
     margin-right:25px;
     font-size:20px;
     color:#ccc;
