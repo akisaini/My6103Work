@@ -19,7 +19,8 @@ df['sentiment'] = df['sentiment'].apply(lambda x : 1 if x =='positive' else 0)
 review_text = df['review'].apply(lambda x : gensim.utils.simple_preprocess(x))
 # %%
 model = gensim.models.Word2Vec(
-        window = 5, 
+        # vector_size = 100 - default value
+        window = 10, 
         min_count = 3, # min count of sentence
         workers = 4 # number of cpu's active
 )
@@ -40,12 +41,12 @@ model.wv.get_index('good') # 45
 'reinforcement': 49989, 'illuminata': 49990, 'warrick': 49991, 'northstar': 49992, 'aerobicide': 49993, 'wilted': 49994, 'raisins': 49995, 'outgrow': 49996, 'britches': 49997, 'zeb': 49998, 'arye': 49999, 'jeers': 50000, 'consign': 50001, 'scuttled': 50002, 'treacher': 50003, 'onus': 50004, 'hagerty': 50005, 'commodus': 50006, 'receipe': 50007, 'haiti': 50008, 'nibelungenlied': 50009, 'preventable': 50010, 'incontinent': 50011, 'americian': 50012, 'lamerica': 50013, 'fmlb': 50014, 'masts': 50015, 'flayed': 50016
 
 
-# index_to_key (list) list positions are the index and contain the word at the position. for example. index_to_key[45] = 'good'. 
+# model.wv.index_to_key (list) list positions are the index and contain the word at the position. for example. index_to_key[45] = 'good'. 
 'lightened', 'vilgot', 'strobing', 'asperger', 'darwinian', 'attrition', 'moustached', 'correlations', 'indigestible', 'yong', 'joon', 'changeable', 'sloatman', 'extremly', 'maroney', 'dispensation', 'steamers', 'excrete', 'outcrop', 'byool', 'legitimated', 'wrinkler', 'cesare', 'chipped', 'prudhomme', 'spazz'
 
 Both are methods available to fetch total vocab size (len of either), different words in the data set and other information. Basically the vocab size is not the total length of the dataset since it has removed certain words as well.
 '''
-# Now we need to convert each list in review_text (which represents a sentence) into a list representing their indexes. 
+# Now we need to convert each list in review_text (which represents a review) into a list representing indexes of words.  
 
 rev_text_main = []
 for i in review_text:
@@ -55,14 +56,68 @@ for i in review_text:
     rev_text_main.append(innerlist) # append every new innerlist to main list. 
 
 # check avgword2vec
-
-
-
-
-
-
+#%%
+# making sure the word is present in vocab. 
+# Calculating the overall mean of dimensions of each review. Here doc represents df['review'][i] -> each seperate review.
+def avgw2v(doc):
+    doc =  [i for i in doc if i in model.wv.index_to_key]
+    return np.mean(model.wv[doc], axis = 0)
 
 #%%
+main = []
+def rev_doc_avg(rev_doc):
+    for i in rev_doc:
+        main.append(avgw2v(i))
+    return main
+#%%
+rev_doc_avg(review_text) # takes 18 mins on average to compute. 
+
+# converting to np array
+main = np.array(main)
+main[0].size # 100 -> shows 100 dimensions. Each review has been converted into an np array of size (100,)
+#%%
+# now using train test split. 
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(main, df['sentiment'], test_size=0.25, shuffle = True, random_state=15)
+
+#%%
+# building DL model. 
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+#%%
+model = keras.Sequential([
+                        keras.layers.Dense(100, input_shape= (100,), activation = 'relu'), # input layer
+                        keras.layers.Dense(45, activation = 'relu'), # hidden layer (can have any number of neurons)
+                        keras.layers.Dense(25, activation = 'relu'), # another hidden layer
+                        keras.layers.Dense(5, activation = 'relu'), 
+                        keras.layers.Dense(1, activation = 'sigmoid') # output layer -  sigmoid because target is 1/0
+                        ])
+
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+
+model.fit(X_train, y_train, epochs = 20)
+
+#%%
+
+y_pred = model.predict(X_test)
+y_p = []
+for i in y_pred:
+    if i[0] > 0.5:
+        y_p.append(1)
+    else:
+        y_p.append(0)
+y_p
+#%%
+from sklearn.metrics import confusion_matrix, classification_report
+
+cm = confusion_matrix(y_test, y_p)
+report = classification_report(y_test, y_p)
+report # 86% accuracy
+
+
 # -------------------------------------------------------------------
 
 # %%
@@ -105,8 +160,8 @@ padded_revs
 len(padded_revs[0]) # 2500
 len(padded_revs[49999]) # 2500
 # %%
-# Now we will describe the number of features to develop a relation between the words. 
-features = 10
+# Now we will describe the number of features or dimensions to develop a relation between the words. 
+features = 10 # suitable number is between 10's and 100. 
 model = Sequential()
 model.add(Embedding(vocab_size, features, input_length = max_sentence_length, name = 'embedding'))
 model.add(Flatten())
@@ -139,5 +194,8 @@ cm = confusion_matrix(y_test, y_pred_revised)
 print(cm)
 # %%
 report = classification_report(y_test, y_pred_revised)
-print(report)
+print(report) # 86% accuracy
 # %%
+
+
+
