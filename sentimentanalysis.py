@@ -15,16 +15,16 @@ df['sentiment'].value_counts()
 # converting target variable to 1(positive) and 0. 
 df['sentiment'] = df['sentiment'].apply(lambda x : 1 if x =='positive' else 0)
 # %%
-# running through gensim preprocessing.  - This converts each sentence into an array of words and removes unnecessary words from the sentence.
+# running through gensim preprocessing.  - This converts each sentence into an array of words and removes unnecessary words from the sentence, converts into lowercase etc. 
 review_text = df['review'].apply(lambda x : gensim.utils.simple_preprocess(x))
 # %%
 model = gensim.models.Word2Vec(
-        window = 5,
-        min_count = 3,
-        workers = 4
+        window = 5, 
+        min_count = 3, # min count of sentence
+        workers = 4 # number of cpu's active
 )
 #%%
-# building a vocabulary now. This contains a list of all the different words. 
+# building a vocabulary now. This contains a list of all the different words specific to our dataset. 
 vocab = model.build_vocab(review_text, progress_per=1000)
 # %%
 # corpus_count is the total examples in review_text. 
@@ -32,8 +32,37 @@ model.train(review_text, total_examples=model.corpus_count, epochs = model.epoch
 # %%
 model.wv.most_similar('good')
 # %%
-model.wv.get_index('good')
+model.wv.get_index('good') # 45
+#%%
 
+'''
+# key_to_index (dict) word is the key here and number is the index. 
+'reinforcement': 49989, 'illuminata': 49990, 'warrick': 49991, 'northstar': 49992, 'aerobicide': 49993, 'wilted': 49994, 'raisins': 49995, 'outgrow': 49996, 'britches': 49997, 'zeb': 49998, 'arye': 49999, 'jeers': 50000, 'consign': 50001, 'scuttled': 50002, 'treacher': 50003, 'onus': 50004, 'hagerty': 50005, 'commodus': 50006, 'receipe': 50007, 'haiti': 50008, 'nibelungenlied': 50009, 'preventable': 50010, 'incontinent': 50011, 'americian': 50012, 'lamerica': 50013, 'fmlb': 50014, 'masts': 50015, 'flayed': 50016
+
+
+# index_to_key (list) list positions are the index and contain the word at the position. for example. index_to_key[45] = 'good'. 
+'lightened', 'vilgot', 'strobing', 'asperger', 'darwinian', 'attrition', 'moustached', 'correlations', 'indigestible', 'yong', 'joon', 'changeable', 'sloatman', 'extremly', 'maroney', 'dispensation', 'steamers', 'excrete', 'outcrop', 'byool', 'legitimated', 'wrinkler', 'cesare', 'chipped', 'prudhomme', 'spazz'
+
+Both are methods available to fetch total vocab size (len of either), different words in the data set and other information. Basically the vocab size is not the total length of the dataset since it has removed certain words as well.
+'''
+# Now we need to convert each list in review_text (which represents a sentence) into a list representing their indexes. 
+
+rev_text_main = []
+for i in review_text:
+    innerlist = [] # creates a new innerlist for every i
+    for j in i:
+        innerlist.append(model.wv.key_to_index.get(j))
+    rev_text_main.append(innerlist) # append every new innerlist to main list. 
+
+# check avgword2vec
+
+
+
+
+
+
+
+#%%
 # -------------------------------------------------------------------
 
 # %%
@@ -71,6 +100,7 @@ max_sentence_length = 2500
 
 # %%
 padded_revs = pad_sequences(rev, maxlen = max_sentence_length, padding = 'post')
+# padded revs
 padded_revs
 len(padded_revs[0]) # 2500
 len(padded_revs[49999]) # 2500
