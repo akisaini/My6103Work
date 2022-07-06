@@ -198,4 +198,22 @@ print(report) # 86% accuracy
 # %%
 
 
+# ----------------------------------------------------------------------
+#%%
+'''Stemming allows the computer to group together words according to their stem. For instance: “walk,” “walked” and “walking.”
 
+Lemmatization is a bit more complex in that the computer can group together words that do not have the same stem, but still have the same inflected meaning. Grouping the word “good” with words like “better” and “best” is an example of lemmatization.'''
+## spaCy 
+import spacy
+# en_core_web_sm is a pre built pipeline. We can build our own as well by adding the components we need. 
+nlp = spacy.load("en_core_web_sm")
+doc = nlp('I love this package. This is turning out to be pretty useful') 
+print([(w.text, w.pos_) for w in doc]) # pos - 'part of speech' tagging. 
+# %%
+token0 = doc[0]
+# %%
+# %%
+# will split the input into various sentences seperated by '.' or period. 
+for sentence in doc.sents:
+    print(sentence)
+# %%
