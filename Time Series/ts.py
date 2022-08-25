@@ -17,3 +17,8 @@ plt.xticks(rotation = 30)
 plt.show()
 #df['High'].plot(figsize = (12,4))
 # %%
+df.loc[dstart:dend]
+# %%
+pd.to_datetime(df['Date'])
+df.set_index('Date', inplace = True)
+# %%

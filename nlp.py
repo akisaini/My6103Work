@@ -106,3 +106,11 @@ doc = nlp('Mike Bloomberg founded Bloomberg Inc. in 1982.')
 for ent in doc.ents:
     print(ent.text, '|', ent.label_, '|', spacy.explain(ent.label_))
 # %%
+import spacy
+nlp = spacy.load('en_core_web_sm')
+# %%
+doc = nlp('Hey what is going on with the car and Tesla inc. lately?')
+# %%
+for ent in doc.ents:
+    print(ent.text, '|', ent.label_)
+# %%
