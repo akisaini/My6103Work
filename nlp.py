@@ -114,3 +114,9 @@ doc = nlp('Hey what is going on with the car and Tesla inc. lately?')
 for ent in doc.ents:
     print(ent.text, '|', ent.label_)
 # %%
+nlp.pipe_names
+# %%
+for token in doc:
+    print(token, '|', token.pos_, '|', token.lemma_)
+# %%
+'Label and one hot encoding'
