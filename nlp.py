@@ -120,3 +120,21 @@ for token in doc:
     print(token, '|', token.pos_, '|', token.lemma_)
 # %%
 'Label and one hot encoding'
+#Bag of words
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+# %%
+df = pd.read_csv('spam2.csv')
+# %%
+df['Category'].value_counts()
+#Highly unbalanced dataset. 
+#ham     4825
+#spam     747
+# %%
+df['Spam'] = df['Category'].apply(lambda x : 1 if x =='spam' else 0)
+
+# %%
+# x = message, y = result
+X_train, X_test, y_train, y_test = train_test_split(df['Message'], df['Spam'], test_size=0.25, random_state = 10)
+# %%
