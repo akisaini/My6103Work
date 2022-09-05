@@ -232,3 +232,81 @@ pqd_comb = list(itertools.product(p,q,d)) # itertools.products gives all the car
 
 
 # %%
+#HOLT-WINTERS Method. 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# %%
+df = pd.read_csv('dailysales.txt', parse_dates=['date'])
+# %%
+#will group sale data of the same day. 
+df = df.groupby('date').sum()
+# %%
+#Sales are generally tallied monthly. So we need to resample the data to sum up monthly sales. rule MS - stands for month start. 
+df=df.resample(rule = 'MS').sum()
+# %%
+df.plot()
+# %%
+import statsmodels.api as sm
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# %%
+train = df[:19]
+test = df[19:]
+#%%
+seasonal_decompose(df, model = 'additive', freq = 4).plot()
+#additive trend, quarterly frequency. 
+
+# Additive trend, additive seasonality. 
+# %%
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
+hwmodel = ExponentialSmoothing(train['sales'], trend = 'add', seasonal = 'mul', seasonal_periods = 4).fit()
+# %%
+test_pred = hwmodel.forecast(5)
+# %%
+test_pred
+# %%
+train['sales'].plot(legend = True, label = 'Train', figsize =(12,5))
+test['sales'].plot(legend =True, label = 'Test')
+test_pred.plot(legend = True, label = 'Predicted')
+# %%
+from sklearn.metrics import mean_squared_error
+
+
+# %%
+np.sqrt(mean_squared_error(test, test_pred))
+# %%
+#value_counts 
+#imputation - statistical process to replace missing values with substituted data. 
+
+# %%
+df.isnull().sum()
+# %%
+# %%
+df = pd.read_csv('dailysales.txt')
+# %%
+df['date'] = pd.to_datetime(df['date'])
+
+# %%
+df.set_index('date')
+# %%
+df.groupby('date').sum()
+# %%
+df.nunique()
+# %%
+df.info()
+# %%
+df.value_counts()
+# %%
+df = pd.read_csv('temp.csv')
+# %%
+# %%
+df
+# %%
+df.loc[df['Sunrise']==655]
+# %%
+df.query('Sunrise==655')
+# %%
