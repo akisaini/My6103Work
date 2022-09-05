@@ -134,3 +134,101 @@ res_ARIMA= model.fit(disp = 1)
 plt.plot(tf_log_diff)
 plt.plot(res_ARIMA.fittedvalues, color = 'red')
 # %%
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.arima_model import ARIMA
+import matplotlib.pyplot as plt
+# %%
+df = pd.read_csv('airline.txt')
+# %%
+df.dropna(axis = 0, inplace = True)
+# %%
+df.set_index('Month', inplace = True)
+# %%
+from statsmodels.tsa.stattools import adfuller 
+
+def adf_test(df):
+    result = adfuller(df)
+    print(f'p-val : {result[1]}')
+    
+# %%
+adf_test(df['Thousands of Passengers'])
+#p-val : 0.991880243437641
+#so we will not reject the null hypothesis - Hence data is not stationary
+# %%
+#Make stationary - use differencing. 
+
+df['Passengers First Difference'] = df['Thousands of Passengers']-df['Thousands of Passengers'].shift(1)
+
+# %%
+adf_test(df['Passengers First Difference'].dropna())
+#p-val : 0.05421329028382468
+#we will not reject null hypothesis. - Non stationary
+# %%
+df['Passengers Second Difference'] = df['Passengers First Difference'] - df['Passengers First Difference'].shift(1)
+# %%
+adf_test(df['Passengers Second Difference'].dropna())
+#p-val : 2.732891850014085e-29
+#We will accept the alt hypothesis. Data is stationary. 
+# %%
+
+df =  pd.read_csv('cham.txt')
+
+df.rename(columns = {'Perrin Freres monthly champagne sales millions ?64-?72':'cham'}, inplace = True)
+df['Month'] = pd.to_datetime(df['Month'])
+# %%
+df.set_index('Month', inplace = True)
+# %%
+from statsmodels.tsa.stattools import adfuller 
+
+def adf_test(df):
+    result = adfuller(df)
+    print(f'p-val : {result[1]}')
+# %%
+adf_test(df['cham'])
+#Not stationary
+#P-value = 0.3639
+# %%
+#Transformation using Differencing
+df['First diff'] = df['cham'] - df['cham'].shift(1)
+adf_test(df['First diff'].dropna())
+#p-val : 2.5196204473868427e-10
+#Stationary
+# %%
+#Since data is seasonal, we will shift by 12 lags. 
+#This is usually done for all seasonal data's. 
+# %%
+df['seasonal diff'] = df['cham'] - df['cham'].shift(12)
+adf_test(df['seasonal diff'].dropna())
+#p-val : 2.060579696813685e-11
+#We accept alt hypothesis. Data is Stationary
+# %%
+#ACF and PACF
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+# %%
+#iloc gets all values after the NaN. 
+fig1 = plot_acf(df['seasonal diff'].iloc[13:], lags = 40)
+fig2 = plot_pacf(df['seasonal diff'].iloc[13:], lags = 40)
+# %%
+# ACF vs PACF: Autocorrelation function and partial ACF. 
+# ACF - correlation with it's past values. 
+# MA  - correlation between the past error. 
+# Integrated ~~ Differenced. 
+#p q d  
+# P is found using PACF plot
+# q is found using ACF plot 
+# d = differenced. We difference the data to get rid of seasonality and trend to make it stationary. 
+# D is order: how many time we difference the data. 
+# Classical method - Using ACF PACF plots. 
+# new method: auto_arima function. 
+#%%
+import itertools  # - Interesting package. 
+#%%
+p = range(0,8)
+q = range(0,8)
+d = range(0,2)
+
+pqd_comb = list(itertools.product(p,q,d)) # itertools.products gives all the cartesian products. 
+
+
+# %%
