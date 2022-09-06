@@ -1,4 +1,4 @@
-Month,Perrin Freres monthly champagne sales millions ?64-?72
+Month,sales
 1964-01,2815
 1964-02,2672
 1964-03,2755
