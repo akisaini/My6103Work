@@ -310,3 +310,39 @@ df.loc[df['Sunrise']==655]
 # %%
 df.query('Sunrise==655')
 # %%
+import pandas as pd
+# %%
+df = pd.DataFrame(data = {'yt':[9,4,1,0,1,4,9]})
+# %%
+import pandas_datareader as pdr
+from statsmodels.tsa.stattools import kpss
+import matplotlib.pyplot as plt
+
+
+ #%%
+df = pdr.DataReader('AAPL', data_source = 'yahoo', start = '2000-01-01', end = '2022-09-07')
+# %%
+kpss(df['Close'], regression ='c', nlags = 'auto')
+# %%
+# Not Stationary. 
+import matplotlib.pyplot as plt
+def Plot_Rolling_Mean_Var(df):
+    m = []
+    v = []
+    for i in range(0, len(df)):
+        df1 = df.head(i+1)  
+        m.append(df1.mean())
+        v.append(df1.var())
+    fig, ax =  plt.subplots(2,1, figsize = (12,8))
+    ax[0].plot(df.index, m)
+    ax[0].set_title('Rolling Mean')
+
+    ax[0].set_ylabel('Mean')
+    ax[1].plot(df.index, v)
+    ax[1].set_title('Rolling variance')
+    ax[1].set_xlabel('Year')
+    ax[1].set_ylabel('Variance')
+    plt.show()
+    
+
+# %%
